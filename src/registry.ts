@@ -4,5 +4,6 @@ export type EventName =
     | "changescreen_play"
     | "changescreen_saves"
     | "changescreen_settings"
-    | "changescreen_credits";
+    | "changescreen_credits"
+    | "s1_challenge_shock_open"
     

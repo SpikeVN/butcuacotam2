@@ -14,7 +14,7 @@ import DraggableWindow from "./winlib/DraggableWindow";
 
 import "./styles/VisualNovelTextWindow.css";
 import {
-    currentLine,
+    script,
     getNextText,
     ScriptEntry,
     invokeCurrentTrigger,
@@ -84,7 +84,13 @@ const parseMarkdown = (text: string): ParsedText => {
     return { text: cleanText, format };
 };
 
-const VisualNovelTextWindow: Component = (props) => {
+interface VisualNovelTextWindowProps {
+    isExiting?: boolean;
+}
+
+const VisualNovelTextWindow: Component<VisualNovelTextWindowProps> = (
+    props,
+) => {
     let textContainer: HTMLDivElement | undefined;
     let textElement: HTMLParagraphElement | undefined;
 
@@ -200,7 +206,7 @@ const VisualNovelTextWindow: Component = (props) => {
 
     createEffect(() => {
         // Synchronize with global script state
-        const line = currentLine();
+        const line = script.line;
         if (line) {
             const parsed = parseMarkdown(line[2]);
             setCharacterName(line[1]);
@@ -237,14 +243,10 @@ const VisualNovelTextWindow: Component = (props) => {
                 initialX={window.innerWidth / 2 - 412}
                 initialY={window.innerHeight - 160 - 24}
                 alwaysOnTop={true}
+                isExiting={props.isExiting}
             >
-                <div
-                    class="visualnovel-outer select-none"
-                    style={{
-                        "user-select": "none",
-                    }}
-                >
-                    <div class="visualnovel-title text-md font-semibold">
+                <div class="visualnovel-outer">
+                    <div class="visualnovel-title text-md font-semibold select-none">
                         {characterName()}
                     </div>
                     <div

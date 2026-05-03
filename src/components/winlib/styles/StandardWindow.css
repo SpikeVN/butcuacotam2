@@ -2,9 +2,9 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    user-select: none;
     min-width: 200px;
     min-height: 100px;
+    --resize-handle-n-top: -1.2rem;
 }
 
 .standard-window-inner {
@@ -28,7 +28,23 @@
     }
 }
 
+@keyframes standard-window-fade-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+.textwindow.exiting .standard-window-inner {
+    animation: standard-window-fade-out 0.25s ease-in forwards;
+}
+
 .standard-titlebar {
+    position: absolute;
     padding: 8px 18px;
     background: var(--color-accent);
     color: var(--color-bg);
@@ -40,7 +56,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     width: fit-content;
-    margin-bottom: -1rem;
+    top: -1.2rem;
     z-index: 1;
 }
 
@@ -65,7 +81,7 @@
 
 .standard-content.no-padding {
     padding: 0;
-    padding-top: 1.5rem;
+    padding-top: 0.8rem;
 }
 
 .standard-content.no-spacing {

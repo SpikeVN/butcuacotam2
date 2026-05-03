@@ -19,9 +19,9 @@
 import { createSignal, Match, Switch, type Component } from "solid-js";
 import { GameStage } from "./types";
 
-import LoadingScreen from "./components/LoadingScreen";
-import MainMenu from "./components/MainMenu";
-import Game from "./components/Game";
+import LoadingScreen from "./storyline/LoadingScreen";
+import MainMenu from "./storyline/MainMenu";
+import Game from "./storyline/Game";
 import { registerEvent } from "./engine/events";
 import NotificationSystem from "./components/winlib/NotificationSystem";
 import { loadUserdata } from "./engine/userdata";

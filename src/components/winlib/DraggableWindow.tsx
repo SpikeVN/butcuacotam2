@@ -59,10 +59,10 @@ interface DraggableWindowProps {
     initialX?: number;
     /** The initial Y position of the window. Defaults to center of screen. */
     initialY?: number;
-    /** The initial width of the window in pixels. Can be a number or a signal. Defaults to 400. */
-    initialWidth?: number | Accessor<number>;
-    /** The initial height of the window in pixels. Can be a number or a signal. Defaults to 300. */
-    initialHeight?: number | Accessor<number>;
+    /** The initial width of the window in pixels. Can be a number or a signal. Defaults to 'auto'. */
+    initialWidth?: number | Accessor<number> | "auto";
+    /** The initial height of the window in pixels. Can be a number or a signal. Defaults to 'auto'. */
+    initialHeight?: number | Accessor<number> | "auto";
     /** Callback fired when window width changes. Useful for updating external signals. */
     onWidthChange?: (width: number) => void;
     /** Callback fired when window height changes. Useful for updating external signals. */
@@ -94,6 +94,8 @@ interface DraggableWindowProps {
     minHeight?: number;
     /** Callback to receive the DraggableWindowAPI instance. */
     apiRef?: (api: DraggableWindowAPI) => void;
+    /** If true, the window is in its exit animation phase. */
+    isExiting?: boolean;
 }
 
 let globalZIndex = 1000;
@@ -102,32 +104,41 @@ let alwaysOnTopZIndex = 10000;
 const DraggableWindow: Component<DraggableWindowProps> = (props) => {
     // Helper function to get value from number or signal
     const getValue = (
-        val: number | Accessor<number> | undefined,
-        defaultVal: number,
-    ): number => {
+        val: number | Accessor<number> | "auto" | undefined,
+        defaultVal: number | "auto",
+    ): number | "auto" => {
         if (val === undefined) return defaultVal;
+        if (val === "auto") return "auto";
         return typeof val === "function" ? (val as Accessor<number>)() : val;
     };
 
-    const initialWidth = () => getValue(props.initialWidth, 400);
-    const initialHeight = () => getValue(props.initialHeight, 300);
+    const initialWidthValue = () => getValue(props.initialWidth, "auto");
+    const initialHeightValue = () => getValue(props.initialHeight, "auto");
 
-    const initialX = () =>
-        props.initialX !== undefined
-            ? props.initialX
-            : Math.max(0, (window.innerWidth - initialWidth()) / 2);
-    const initialY = () =>
-        props.initialY !== undefined
-            ? props.initialY
-            : Math.max(0, (window.innerHeight - initialHeight()) / 2);
+    const [size, setSize] = createSignal<{
+        width: number | "auto";
+        height: number | "auto";
+    }>({
+        width: initialWidthValue(),
+        height: initialHeightValue(),
+    });
+
+    const initialX = () => {
+        if (props.initialX !== undefined) return props.initialX;
+        const w = size().width;
+        if (w === "auto") return 0;
+        return Math.max(0, (window.innerWidth - w) / 2);
+    };
+    const initialY = () => {
+        if (props.initialY !== undefined) return props.initialY;
+        const h = size().height;
+        if (h === "auto") return 0;
+        return Math.max(0, (window.innerHeight - h) / 2);
+    };
 
     const [position, setPosition] = createSignal({
         x: initialX(),
         y: initialY(),
-    });
-    const [size, setSize] = createSignal({
-        width: initialWidth(),
-        height: initialHeight(),
     });
 
     const [isDragging, setIsDragging] = createSignal(false);
@@ -207,16 +218,16 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
                 ...options,
                 onUpdate: () => {
                     setSize({
-                        width: currentSize.width,
-                        height: currentSize.height,
+                        width: currentSize.width as number,
+                        height: currentSize.height as number,
                     });
-                    props.onWidthChange?.(currentSize.width);
-                    props.onHeightChange?.(currentSize.height);
+                    props.onWidthChange?.(currentSize.width as number);
+                    props.onHeightChange?.(currentSize.height as number);
                 },
             });
         },
         getPosition: () => position(),
-        getSize: () => size(),
+        getSize: () => size() as { width: number; height: number },
     };
 
     if (props.apiRef) {
@@ -226,6 +237,46 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
     onMount(() => {
         const id = props.id || `win-${Math.random().toString(36).substr(2, 9)}`;
         registerWindow(id, props.title || id, api);
+
+        // If size is auto, measure and fix it
+        if (
+            windowRef &&
+            (size().width === "auto" || size().height === "auto")
+        ) {
+            const rect = windowRef.getBoundingClientRect();
+            batch(() => {
+                const newWidth =
+                    size().width === "auto"
+                        ? Math.max(props.minWidth ?? 200, rect.width)
+                        : (size().width as number);
+                const newHeight =
+                    size().height === "auto"
+                        ? Math.max(props.minHeight ?? 100, rect.height)
+                        : (size().height as number);
+                setSize({ width: newWidth, height: newHeight });
+
+                // Recalculate position if it was supposed to be centered
+                if (
+                    props.initialX === undefined ||
+                    props.initialY === undefined
+                ) {
+                    const newX =
+                        props.initialX !== undefined
+                            ? props.initialX
+                            : Math.max(0, (window.innerWidth - newWidth) / 2);
+                    const newY =
+                        props.initialY !== undefined
+                            ? props.initialY
+                            : Math.max(0, (window.innerHeight - newHeight) / 2);
+                    setPosition({ x: newX, y: newY });
+                }
+
+                // Trigger callbacks
+                props.onWidthChange?.(newWidth);
+                props.onHeightChange?.(newHeight);
+            });
+        }
+
         onCleanup(() => unregisterWindow(id));
     });
 
@@ -260,9 +311,8 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
             const windowY = position().y;
             const draggableHeight = props.draggableHeight ?? 40;
             const clickYRelativeToWindow = e.clientY - windowY;
-            canDrag =
-                clickYRelativeToWindow >= 0 &&
-                clickYRelativeToWindow <= draggableHeight;
+            // Allow negative values to support protruding handles (like StandardWindow titles)
+            canDrag = clickYRelativeToWindow <= draggableHeight;
         } else if (mode === "anywhere") {
             // Drag from anywhere on the window
             canDrag = true;
@@ -282,6 +332,9 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
     };
 
     const handleResizeMouseDown = (e: MouseEvent, type: string) => {
+        // Cannot resize if size is still auto (though it should be fixed by onMount)
+        if (size().width === "auto" || size().height === "auto") return;
+
         e.stopPropagation();
         // Bring window to front on resize
         bringToFront();
@@ -291,8 +344,8 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
         setResizeStart({
             x: e.clientX,
             y: e.clientY,
-            w: size().width,
-            h: size().height,
+            w: size().width as number,
+            h: size().height as number,
             px: position().x,
             py: position().y,
         });
@@ -305,12 +358,14 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
         if (isDragging()) {
             const offset = dragOffset();
             const currentSize = size();
+            const width = currentSize.width as number;
+            const height = currentSize.height as number;
 
             let newX = e.clientX - offset.x;
             let newY = e.clientY - offset.y;
 
-            const maxInBoundsX = window.innerWidth - currentSize.width;
-            const maxInBoundsY = window.innerHeight - currentSize.height;
+            const maxInBoundsX = window.innerWidth - width;
+            const maxInBoundsY = window.innerHeight - height;
             const snapThreshold = 10; // Pixels to snap/stay on edge
 
             // Bounds check
@@ -330,7 +385,7 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
 
                 // Hard limits (keep at least 50 pixels visible)
                 newX = Math.max(
-                    -(currentSize.width - 50),
+                    -(width - 50),
                     Math.min(newX, window.innerWidth - 50),
                 );
                 newY = Math.max(
@@ -339,14 +394,8 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
                 );
             } else {
                 // Keep completely within bounds
-                newX = Math.max(
-                    0,
-                    Math.min(newX, window.innerWidth - currentSize.width),
-                );
-                newY = Math.max(
-                    0,
-                    Math.min(newY, window.innerHeight - currentSize.height),
-                );
+                newX = Math.max(0, Math.min(newX, window.innerWidth - width));
+                newY = Math.max(0, Math.min(newY, window.innerHeight - height));
             }
 
             setPosition({ x: newX, y: newY });
@@ -446,17 +495,26 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
     return (
         <div
             ref={windowRef}
-            class={`textwindow ${props.class || ""}`}
+            class={`textwindow ${props.class || ""} ${props.isExiting ? "exiting" : ""}`}
             onClick={() => bringToFront()}
             style={{
-                width: `${size().width}px`,
-                height: `${size().height}px`,
+                width: size().width === "auto" ? "auto" : `${size().width}px`,
+                height:
+                    size().height === "auto" ? "auto" : `${size().height}px`,
                 "z-index": zIndex(),
+                visibility:
+                    size().width === "auto" || size().height === "auto"
+                        ? "hidden"
+                        : "visible",
+                "user-select":
+                    props.draggableMode === "anywhere" ? "none" : "auto",
                 cursor: isDragging()
                     ? "grabbing"
                     : isResizing()
                       ? "crosshair"
-                      : "default",
+                      : props.draggableMode === "anywhere"
+                        ? "default"
+                        : "auto",
             }}
             onMouseDown={handleMouseDown}
         >

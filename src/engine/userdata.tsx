@@ -1,5 +1,5 @@
 import { UserData } from "../types";
-import { setCurrentScriptIndex, setCurrentPath } from "./script";
+import { setScript } from "./script";
 
 export let userdata: UserData = {
     name: "Lân",
@@ -10,13 +10,15 @@ export let userdata: UserData = {
             name: "Default Save",
             timestamp: 0,
             path: "intro_game1",
-            index: 4,
+            index: 18,
         },
     },
 };
 
 export const loadUserdata = () => {
     const currentProgress = userdata.saves[userdata.currentSave];
-    setCurrentPath(currentProgress.path);
-    setCurrentScriptIndex(currentProgress.index);
+    setScript({
+        path: currentProgress.path,
+        index: currentProgress.index,
+    });
 };

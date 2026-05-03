@@ -11,6 +11,7 @@
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.13",
     "solid-devtools": "^0.34.3",
     "tailwindcss": "^4.1.13",

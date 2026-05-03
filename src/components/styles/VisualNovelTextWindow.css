@@ -21,6 +21,21 @@
     }
 }
 
+@keyframes vn-window-fade-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+}
+
+.textwindow.exiting .visualnovel-outer {
+    animation: vn-window-fade-out 0.25s ease-in forwards;
+}
+
 .visualnovel-title {
     background-color: var(--color-accent);
     color: var(--color-bg);

@@ -8,11 +8,7 @@ import {
 } from "solid-js";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
-import {
-    currentLine,
-    getNextText,
-    invokeCurrentTrigger,
-} from "../engine/script";
+import { script, getNextText, invokeCurrentTrigger } from "../engine/script";
 
 import "./styles/FullScreenNarrator.css";
 
@@ -193,7 +189,7 @@ const FullScreenNarrator: Component = () => {
     });
 
     createEffect(() => {
-        const line = currentLine();
+        const line = script.line;
         if (line && line[2]) {
             const parsed = parseMarkdown(line[2]);
             batch(() => {

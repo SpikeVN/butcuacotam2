@@ -21,10 +21,10 @@ interface StandardWindowProps {
     initialX?: number;
     /** The initial Y position of the window. Defaults to center of screen. */
     initialY?: number;
-    /** The initial width of the window in pixels. */
-    initialWidth?: number;
-    /** The initial height of the window in pixels. */
-    initialHeight?: number;
+    /** The initial width of the window in pixels or 'auto'. Defaults to 'auto'. */
+    initialWidth?: number | "auto";
+    /** The initial height of the window in pixels or 'auto'. Defaults to 'auto'. */
+    initialHeight?: number | "auto";
     /** Callback fired when the window receives focus. */
     onFocus?: (zIndex: number) => void;
     /** If true, uses a higher z-index layer. */
@@ -50,6 +50,8 @@ interface StandardWindowProps {
     noTitlebarSpacing?: boolean;
     /** Callback to receive the StandardWindowAPI instance. */
     apiRef?: (api: StandardWindowAPI) => void;
+    /** If true, the window is in its exit animation phase. */
+    isExiting?: boolean;
 }
 
 const StandardWindow: Component<StandardWindowProps> = (props) => {
@@ -60,9 +62,9 @@ const StandardWindow: Component<StandardWindowProps> = (props) => {
             id={props.id}
             apiRef={props.apiRef}
             title={props.title}
-            draggableMode={props.draggableMode ?? "topbar"}
+            draggableMode={props.draggableMode ?? "selector"}
             draggableHeight={props.draggableHeight}
-            draggableSelector={props.draggableSelector}
+            draggableSelector={props.draggableSelector ?? ".standard-titlebar"}
             class="standard-window"
             initialX={props.initialX}
             initialY={props.initialY}
@@ -72,6 +74,7 @@ const StandardWindow: Component<StandardWindowProps> = (props) => {
             alwaysOnTop={props.alwaysOnTop}
             baseZIndex={props.baseZIndex}
             allowOffScreen={props.allowOffScreen}
+            isExiting={props.isExiting}
         >
             <div class="standard-window-inner">
                 <div

@@ -1,23 +1,35 @@
 ﻿import { showNotification } from "./engine/notification";
 import { ScriptEntry } from "./engine/script";
 
+// prettier-ignore
 export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
     "intro_game1": [
         // ===== SECTION 1 =====
         // ----- lead-in -----
-        ["s1.blank", "System", "*Ở một ngôi làng bé nhỏ, có hai chị em cùng cha khác mẹ tên là Tấm và Cám.*"],
-        ["s1.blank", "System", "*Cha Tấm hết mực yêu thương cô, nhưng sau đó không lâu ông cũng qua đời.*"],
-        ["s1.blank", "System", "*Tấm phải sống chung với mụ dì ghẻ cay nghiệt.*"],
-        ["s1.blank", "System", "*Hằng ngày, Tấm phải làm hết công việc trong nhà, còn Cám thì được lêu lổng vui chơi.*"],
+/* 0 */ ["s1.blank", "System", "*Ở một ngôi làng bé nhỏ xưa kia, có hai chị em cùng cha khác mẹ tên là Tấm và Cám.*"],
+/* 1 */ ["s1.blank", "System", "*Ở một thị trấn bé nhỏ khác, cũng có hai chị em tên là Tấm và Cám.*"],
+/* 2 */ ["s1.blank", "System", "*Cha Tấm hết mực yêu thương cô, nhưng sau đó không lâu ông cũng qua đời. Tấm phải sống chung với mụ dì ghẻ cay nghiệt.*"],
+/* 3 */ ["s1.blank", "System", "*Cám được lêu lổng vui chơi hằng ngày. Cuộc sống của Tấm lại ngập trong thùng hàng Shopee và quần áo chưa gấp.*"],
 
-        ["s1.leadin", "Cám", "Chị Tấm! Chị edit xong cái clip Tiktok cho em chưa? Sao em đăng lên nãy giờ mà mới có 2 tim? Chị chỉnh màu kiểu gì nhìn mặt em như vừa đi đào mỏ về thế?", () => {
-            showNotification("Mẹo", "Bạn có thể kéo thả các cửa sổ bằng cách nhấn giữ và kéo cửa sổ. Game tự động lưu tiến trình. Bấm vào menu BụtOS ở góc dưới bên trái màn hình để xem các tùy chọn.", 5000);
+/* 4 */ ["s1.leadin", "Cám", "Chị Tấm! Phần mới cái clip Morning Routine em quay hôm qua chị edit xong chưa? Phần cũ em đăng từ tối qua mà giờ này mới có 7 tim.", () => {
+            showNotification("Mẹo", "Bạn có thể kéo thả các cửa sổ bằng cách nhấn giữ phần gần đỉnh và kéo cửa sổ. Một số có thể kéo thả ở bất kỳ vị trí nào.", 5000);
+            setTimeout(() => {
+                showNotification("Mẹo", "Game tự động lưu tiến trình. Bấm vào menu BụtOS ở góc dưới bên trái màn hình để xem các tùy chọn.", 5000);
+            }, 5000)
         }],
-        ["s1.leadin", "Tấm", "Chị đang render, máy nó nóng quá nó lag. Với lại em quay ngược sáng thì Bụt cũng không cứu nổi cái da của em đâu Cám ạ."],
-        ["s1.leadin", "Dì ghẻ", "Tấm! Nhiệm vụ của mày là cho em nó lên xu hướng, cấm cãi!"],
-        ["s1.leadin", "Dì ghẻ", "À, mà tí nữa check hộ tao 500 cái inbox của shop nhé. Khách hỏi giá thì cứ copy-paste cái mẫu trong đấy là được. Làm xong rồi thì tao mới cho đi chơi."],
-        ["s1.leadin", "Tấm", "Ơ... nhưng con phải săn vé..."],
-        ["s1.leadin", "Dì ghẻ", "Hừ. Vé với chả viếc. Đây, nhìn đống này đi!"],
-        ["s1.leadin", "Tấm", "..."],
+/* 5 */ ["s1.leadin", "Cám", "LÀ BẢY TIM ĐÓOOO!!! Mà filter kiểu gì mà da mặt em vẫn đen thế này!?"],
+/* 6 */ ["s1.leadin", "Tấm", "Chị đang render, máy nó nóng quá nó lag."],
+/* 7 */ ["s1.leadin", "Tấm", "Mà Cám này, chị nói thật nhé: em quay ngược sáng thì app nào cũng bó tay, đừng đổ tội cho chị."],
+/* 8 */ ["s1.leadin", "Cám", "Chị cứ bào chữa lung tung! Mấy đứa KOL trên TikTok người ta cũng quay ngược sáng mà vẫn đẹp như thường!"],
+/* 9 */ ["s1.leadin", "Tấm", "KOL trên mạng người ta có gimbal, có diffuser, có tiền mua đèn xịn. Chị chưa thấy ai dùng đèn học từ năm lớp 8 bao giờ."],
+/* 10*/ ["s1.leadin", "Dì ghẻ", "Tấm! Nhiệm vụ của mày là cho em nó lên xu hướng, cấm cãi!"],
+/* 11*/ ["s1.leadin", "Dì ghẻ", "À, mà tí nữa check cho mẹ 500 cái inbox của shop nhé. Khách hỏi giá thì cứ copy-paste cái mẫu trong đấy là được. Làm xong rồi thì tao mới cho đi chơi."],
+/* 12*/ ["s1.leadin", "Tấm", "Ơ... nhưng con phải săn vé..."],
+/* 13*/ ["s1.leadin", "Dì ghẻ", "Hừ. Vé với chả viếc. Nhà còn bao việc. Đây, nhìn đống này đi!", "s1_challenge_shock_open"],
+/* 14*/ ["s1.challenge_shock", "Tấm", "..."],
+/* 15*/ ["s1.challenge_shock", "Tấm", "Mẹ! Chỗ này phải mấy nghìn dòng, lại còn hỏng lung tung, lọc bằng tay đến Tết ạ?"],
+/* 16*/ ["s1.challenge_shock", "Dì ghẻ", "Thì mày giỏi IT mà, xử đi. Cám, đi với mẹ chuẩn bị đồ, chiều mẹ con mình đi concert luôn. Nghe là có nhiều anh đẹp trai lắm!"],
+/* 17*/ ["s1.challenge_shock", "Cám", "Biết rồi mẹ, con đang chọn outfit chụp ảnh đây."],
+/* 18*/ ["s1.challenge", "Tấm", "Ông Bụt ơi! Hãy giúp con với!"],
     ],
 };

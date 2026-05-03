@@ -3,7 +3,6 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    user-select: none;
     min-width: 200px;
     min-height: 100px;
 }
@@ -12,33 +11,63 @@
 .resize-handle {
     position: absolute;
     z-index: 9999;
+    user-select: none;
     /* background: rgba(255, 0, 0, 0.2); /* Debug: uncomment to see handles */
 }
 
-.resize-handle.n, .resize-handle.s {
-    height: 10px;
-    left: 20px;
-    right: 20px;
+.resize-handle.n,
+.resize-handle.s {
+    height: 8px;
+    left: 10px;
+    right: 10px;
     cursor: ns-resize;
 }
-.resize-handle.n { top: var(--resize-handle-n-top, 0px); }
-.resize-handle.s { bottom: 0px; }
+.resize-handle.n {
+    top: calc(var(--resize-handle-n-top, 0px) - 4px);
+}
+.resize-handle.s {
+    bottom: -4px;
+}
 
-.resize-handle.e, .resize-handle.w {
-    width: 10px;
-    top: 20px;
-    bottom: 20px;
+.resize-handle.e,
+.resize-handle.w {
+    width: 8px;
+    top: 10px;
+    bottom: 10px;
     cursor: ew-resize;
 }
-.resize-handle.e { right: 0px; }
-.resize-handle.w { left: 0px; }
-
-.resize-handle.nw, .resize-handle.ne, .resize-handle.sw, .resize-handle.se {
-    width: 25px;
-    height: 25px;
+.resize-handle.e {
+    right: -4px;
+}
+.resize-handle.w {
+    left: -4px;
 }
 
-.resize-handle.nw { top: var(--resize-handle-n-top, 0px); left: 0px; cursor: nwse-resize; }
-.resize-handle.ne { top: var(--resize-handle-n-top, 0px); right: 0px; cursor: nesw-resize; }
-.resize-handle.sw { bottom: 0px; left: 0px; cursor: nesw-resize; }
-.resize-handle.se { bottom: 0px; right: 0px; cursor: nwse-resize; }
+.resize-handle.nw,
+.resize-handle.ne,
+.resize-handle.sw,
+.resize-handle.se {
+    width: 16px;
+    height: 16px;
+}
+
+.resize-handle.nw {
+    top: calc(var(--resize-handle-n-top, 0px) - 8px);
+    left: -8px;
+    cursor: nwse-resize;
+}
+.resize-handle.ne {
+    top: calc(var(--resize-handle-n-top, 0px) - 8px);
+    right: -8px;
+    cursor: nesw-resize;
+}
+.resize-handle.sw {
+    bottom: -8px;
+    left: -8px;
+    cursor: nesw-resize;
+}
+.resize-handle.se {
+    bottom: -8px;
+    right: -8px;
+    cursor: nwse-resize;
+}

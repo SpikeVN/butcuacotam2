@@ -1,4 +1,5 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "../assets/fonts/fonts.css";
 
 body {
@@ -23,9 +24,37 @@ body {
     --font-serif: "Cormorant Garamond";
 
     --color-bg: #100721;
-    --color-fg: #C6B9DC;
-    --color-fg2: #4C376F;
+    --color-fg: #c6b9dc;
+    --color-fg2: #4c376f;
     --color-shadow: #422670;
 
-    --color-accent: #B4A3FD;
+    --color-accent: #b4a3fd;
+    --font-mono:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Mono", "JetBrainsMono Nerd Font",
+        "JetBrains Mono", Consolas, monospace;
+}
+
+/* Global scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-fg2);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--color-bg);
 }
