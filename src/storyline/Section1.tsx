@@ -1,7 +1,5 @@
 import {
     createSignal,
-    Match,
-    Switch,
     onCleanup,
     Show,
     For,
@@ -14,6 +12,7 @@ import StandardWindow from "../components/winlib/StandardWindow";
 import capcutApp from "../../assets/images/capcut.png";
 import { registerEvent } from "../engine/events";
 import { AnimatedShow } from "../components/winlib/AnimatedShow";
+import "./styles/Section1.css";
 
 import camLuxuryLogo from "../../assets/images/camluxury.svg";
 import Challenge1 from "../challenges/Challenge1";
@@ -34,7 +33,7 @@ export default function Section1() {
             </AnimatedShow>
             <AnimatedShow
                 when={
-                    sceneIs(1, "leadin", "challenge_shock") || showChallenge()
+                    sceneIs(1, "leadin", "challenge_shock") || showChallenge() && !sceneIs(1, "challenge")
                 }
             >
                 {(exiting) => (
@@ -50,7 +49,12 @@ export default function Section1() {
             </AnimatedShow>
 
             <AnimatedShow when={sceneIs(1, "challenge")}>
-                {(exiting) => <Challenge1 isExiting={exiting} />}
+                {(exiting) => (
+                    <>
+                        <Challenge1 isExiting={exiting} />
+                        <DatasetWindow isExiting={exiting} />
+                    </>
+                )}
             </AnimatedShow>
 
             <Show when={sceneIs(1, "blank")}>
@@ -201,29 +205,61 @@ function CapCut(props: { isExiting?: boolean }) {
 
 function ChallengeShock(props: { isExiting?: boolean }) {
     let [dataset, setDataset] = createSignal<any[]>([]);
-    let [visibleLimit, setVisibleLimit] = createSignal(50);
-    let sentinelRef: HTMLTableRowElement | undefined;
+    let [visibleLimit, setVisibleLimit] = createSignal(1000);
+    let scrollContainer: HTMLDivElement | undefined;
+    let autoscrollInterval: any;
 
-    fetch("/butcuacotam2/challenges/1/dataset.json").then((r) => {
-        r.json().then((j) => {
-            setDataset(j);
+    const observer = new IntersectionObserver(
+        (entries) => {
+            if (entries[0].isIntersecting) {
+                setVisibleLimit((prev) =>
+                    Math.min(prev + 100, dataset().length),
+                );
+            }
+        },
+        { threshold: 0.1 },
+    );
+
+    const stopAutoscroll = () => {
+        if (autoscrollInterval) {
+            clearInterval(autoscrollInterval);
+            autoscrollInterval = null;
+        }
+    };
+
+    onMount(() => {
+        autoscrollInterval = setInterval(() => {
+            if (scrollContainer && dataset().length > 0 && !props.isExiting) {
+                const current = scrollContainer.scrollTop;
+                const max =
+                    scrollContainer.scrollHeight - scrollContainer.clientHeight;
+
+                if (current >= max - 5 && visibleLimit() >= dataset().length) {
+                    stopAutoscroll();
+                    return;
+                }
+
+                scrollContainer.scrollTop += 1;
+            }
+        }, 20);
+
+        scrollContainer?.addEventListener("wheel", stopAutoscroll, {
+            passive: true,
+        });
+        scrollContainer?.addEventListener("mousedown", stopAutoscroll, {
+            passive: true,
         });
     });
 
-    onMount(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
-                    setVisibleLimit((prev) =>
-                        Math.min(prev + 50, dataset().length),
-                    );
-                }
-            },
-            { threshold: 0.1 },
-        );
+    onCleanup(() => {
+        stopAutoscroll();
+        observer.disconnect();
+    });
 
-        if (sentinelRef) observer.observe(sentinelRef);
-        onCleanup(() => observer.disconnect());
+    fetch(`${import.meta.env.BASE_URL}/challenges/1/dataset.json`).then((r) => {
+        r.json().then((j) => {
+            setDataset(j);
+        });
     });
 
     const visibleData = () => dataset().slice(0, visibleLimit());
@@ -233,6 +269,7 @@ function ChallengeShock(props: { isExiting?: boolean }) {
             noPadding={true}
             initialWidth={1000}
             initialHeight={500}
+            initialY={35}
             title="Dữ liệu"
             draggableMode="anywhere"
             isExiting={props.isExiting}
@@ -253,12 +290,17 @@ function ChallengeShock(props: { isExiting?: boolean }) {
                         </p>
                     </div>
                 </div>
-                <div class="w-full flex-1 overflow-auto border-t-fg2 border-t">
+                <div
+                    ref={scrollContainer}
+                    class="w-full flex-1 overflow-auto border-t-fg2 border-t"
+                >
                     <table
                         class="w-full border-separate border-spacing-0
                         [&_th]:sticky [&_th]:top-0 [&_th]:z-10 [&_th]:bg-bg [&_th]:border-b [&_th]:border-fg2
-                        [&_td]:py-3 [&_td]:text-center
-                        [&_td]:border-b [&_td]:border-fg2/60"
+                        [&_td]:py-3
+                        [&_td]:border-b [&_td]:border-fg2/60
+                        overflow-y-hidden
+                        "
                     >
                         <thead>
                             <tr>
@@ -281,7 +323,7 @@ function ChallengeShock(props: { isExiting?: boolean }) {
                                     </div>
                                 </th>
                                 <th>
-                                    <div class="py-3 flex flex-row gap-1.5 items-center justify-center w-full">
+                                    <div class="px-3 py-3 flex flex-row gap-1.5 items-center justify-center w-full">
                                         {/* prettier-ignore */}
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 1V3M8 1V3M1.5 5H10.5M2.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V10C10.5 10.5523 10.0523 11 9.5 11H2.5C1.94772 11 1.5 10.5523 1.5 10V3C1.5 2.44772 1.94772 2 2.5 2Z" stroke="#B4A3FD" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span class="text-[16px] text-accent">
@@ -290,7 +332,7 @@ function ChallengeShock(props: { isExiting?: boolean }) {
                                     </div>
                                 </th>
                                 <th>
-                                    <div class="py-3 flex flex-row gap-1.5 items-center justify-center w-full">
+                                    <div class="px-3 py-3 flex flex-row gap-1.5 items-center justify-center w-full">
                                         {/* prettier-ignore */}
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 1V3M8 1V3M1.5 5H10.5M2.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V10C10.5 10.5523 10.0523 11 9.5 11H2.5C1.94772 11 1.5 10.5523 1.5 10V3C1.5 2.44772 1.94772 2 2.5 2Z" stroke="#B4A3FD" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span class="text-[16px] text-accent">
@@ -299,7 +341,7 @@ function ChallengeShock(props: { isExiting?: boolean }) {
                                     </div>
                                 </th>
                                 <th>
-                                    <div class="py-3 flex flex-row gap-1.5 items-center justify-center w-full">
+                                    <div class="px-3 py-3 flex flex-row gap-1.5 items-center justify-center w-full">
                                         {/* prettier-ignore */}
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4.5H10M2 7.5H10M5 1.5L4 10.5M8 1.5L7 10.5" stroke="#B4A3FD" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         <span class="text-[16px] text-accent">
@@ -322,12 +364,20 @@ function ChallengeShock(props: { isExiting?: boolean }) {
                             <For each={visibleData()}>
                                 {(item, i) => (
                                     <tr>
-                                        <td>{i() + 1}</td>
-                                        <td>{item.username}</td>
-                                        <td>{item.accountCreated}</td>
-                                        <td>{item.commentCreated}</td>
-                                        <td>{item.rating}</td>
-                                        <td class="text-left px-4">
+                                        <td class="text-center">{i() + 1}</td>
+                                        <td class="text-center">
+                                            {item.username}
+                                        </td>
+                                        <td class="text-center">
+                                            {item.accountCreated}
+                                        </td>
+                                        <td class="text-center">
+                                            {item.commentCreated}
+                                        </td>
+                                        <td class="text-center">
+                                            {item.rating}
+                                        </td>
+                                        <td class="text-left px-4 overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[200px]">
                                             {item.comment}
                                         </td>
                                     </tr>
@@ -335,7 +385,7 @@ function ChallengeShock(props: { isExiting?: boolean }) {
                             </For>
                             {/* Sentinel for infinite scroll */}
                             <Show when={visibleLimit() < dataset().length}>
-                                <tr ref={sentinelRef}>
+                                <tr ref={(el) => observer.observe(el)}>
                                     <td
                                         colspan="6"
                                         class="py-8 text-center text-accent/50 italic"
@@ -356,3 +406,93 @@ function ChallengeShock(props: { isExiting?: boolean }) {
         </StandardWindow>
     );
 }
+
+function DatasetWindow(props: { isExiting?: boolean }) {
+    return (
+        <StandardWindow
+            isExiting={props.isExiting}
+            title="Dữ liệu"
+            initialWidth={325}
+            initialHeight={500}
+            initialX={window.innerWidth - 75 - 325}
+            initialY={25}
+            noPadding={true}
+            draggableMode="anywhere"
+        >
+            <div class="w-full flex flex-col items-start justify-start mt-4 gap-6 px-6">
+                <div class="w-full flex flex-col items-center justify-center">
+                    <img
+                        draggable={false}
+                        src={camLuxuryLogo}
+                        alt="Cám Luxury Logo"
+                    />
+                </div>
+
+                <p class="prose prose-invert text-fg text-sm">
+                    <b>Tổng quan:</b> Đây là dữ liệu comment của shop quần áo
+                    online của Cám, Cám Luxury. Dữ liệu được thu thập theo nhiều
+                    định dạng khác nhau, nên bạn có thể sử dụng nhiều cách và
+                    ngôn ngữ để lọc.
+                </p>
+                <p class="prose prose-invert text-fg text-sm">
+                    Bạn có thể tải dữ liệu xuống theo các định dạng khác nhau
+                    bằng cách bấm vào các nút dưới đây. Nội dung của các file dữ
+                    liệu là giống nhau.
+                </p>
+
+                <div class="w-full grid grid-rows-2 grid-cols-2 gap-3 justify-center items-center">
+                    <a
+                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.xlsx`}
+                        class="btn"
+                        target="_blank"
+                    >
+                        <IconDownload />
+                        .xlsx
+                    </a>
+                    <a
+                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.xlsx`}
+                        class="btn"
+                        target="_blank"
+                    >
+                        <IconDownload />
+                        .csv
+                    </a>
+                    <a
+                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.sb3`}
+                        class="btn"
+                        target="_blank"
+                    >
+                        <IconDownload />
+                        .sb3
+                    </a>
+                    <a
+                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.json`}
+                        class="btn"
+                        target="_blank"
+                    >
+                        <IconDownload />
+                        .json
+                    </a>
+                </div>
+            </div>
+        </StandardWindow>
+    );
+}
+
+const IconDownload = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+        fill="none"
+    >
+        <path
+            d="M9 11.25V2.25M9 11.25L5.25 7.5M9 11.25L12.75 7.5M15.75 11.25V14.25C15.75 14.6478 15.592 15.0294 15.3107 15.3107C15.0294 15.592 14.6478 15.75 14.25 15.75H3.75C3.35218 15.75 2.97064 15.592 2.68934 15.3107C2.40804 15.0294 2.25 14.6478 2.25 14.25V11.25"
+            stroke="var(--color-bg)"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+    </svg>
+);

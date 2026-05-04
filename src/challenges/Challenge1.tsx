@@ -1,4 +1,7 @@
+import { For } from "solid-js";
 import StandardWindow from "../components/winlib/StandardWindow";
+
+import "./Challenge1.css";
 
 export default function Challenge1(props: { isExiting?: boolean }) {
     return (
@@ -11,9 +14,10 @@ export default function Challenge1(props: { isExiting?: boolean }) {
             draggableMode="topbar"
             draggableHeight={30}
             initialY={25}
+            initialX={81}
         >
             <div class="w-full">
-                <div class="w-full max-w-full px-12 py-8 prose prose-invert">
+                <div class="w-full max-w-full px-12 py-8 prose prose-invert text-justify text-fg">
                     <h1 class="font-serif font-bold text-4xl italic text-accent">
                         Thử thách 1. Cám và marketing
                     </h1>
@@ -75,7 +79,7 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="font-mono">username</td>
+                                <td class="font-mono text-accent">username</td>
                                 <td>văn bản</td>
                                 <td>tên người comment</td>
                                 <td class="font-mono text-accent">
@@ -83,7 +87,9 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-mono">accountCreated</td>
+                                <td class="font-mono text-accent">
+                                    accountCreated
+                                </td>
                                 <td>YYYY-MM-DD</td>
                                 <td>ngày tạo tài khoản người comment</td>
                                 <td class="font-mono text-accent">
@@ -91,7 +97,9 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-mono">commentCreated</td>
+                                <td class="font-mono text-accent">
+                                    commentCreated
+                                </td>
                                 <td>YYYY-MM-DD</td>
                                 <td>ngày comment</td>
                                 <td class="font-mono text-accent">
@@ -99,13 +107,13 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                                 </td>
                             </tr>
                             <tr>
-                                <td class="font-mono">rating</td>
-                                <td>số nguyên</td>
+                                <td class="font-mono text-accent">rating</td>
+                                <td>số thực dương</td>
                                 <td>số sao đánh giá</td>
-                                <td class="font-mono text-accent">5</td>
+                                <td class="font-mono text-accent">5.0</td>
                             </tr>
                             <tr>
-                                <td class="font-mono">comment</td>
+                                <td class="font-mono text-accent">comment</td>
                                 <td>văn bản</td>
                                 <td>nội dung bình luận</td>
                                 <td class="font-mono text-accent">
@@ -114,7 +122,12 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                             </tr>
                         </tbody>
                     </table>
+                    <p>
+                        Để vượt qua thử thách, bạn sẽ phải tìm ra được câu trả
+                        lời cho những câu hỏi dưới đây. Chúc bạn may mắn!
+                    </p>
                 </div>
+
                 <svg
                     viewBox="0 0 861 10"
                     fill="none"
@@ -127,9 +140,37 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                 </svg>
 
                 <div class="w-full max-w-full px-12 py-8 prose prose-invert">
-                    <p>Câu 1.</p>
+                    <p class="font-bold">
+                        Tính cả cả comment thật lẫn spam/không hợp lệ, tổng cộng
+                        có bao nhiêu comment?
+                    </p>
+                    <RadioQuestion name="question1" options={["120", "149", "150", "200"]} />
                 </div>
             </div>
         </StandardWindow>
+    );
+}
+
+function RadioQuestion(props: {
+    name: string;
+    options: Array<string>;
+    onSubmit?: () => void;
+}) {
+    return (
+        <div class="flex flex-row gap-3 mt-[-0.8rem]">
+            <For each={props.options}>
+                {(children) => (
+                    <>
+                        <input
+                            type="radio"
+                            class="mcq-input"
+                            name={props.name}
+                            id={`${props.name}-${children}`}
+                        />
+                        <label for={`${props.name}-${children}`}>{children}</label>
+                    </>
+                )}
+            </For>
+        </div>
     );
 }

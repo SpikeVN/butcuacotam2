@@ -1,0 +1,18 @@
+input[type="radio"] {
+    display: none;
+}
+
+label {
+    display: inline-block;
+    padding: 12px 24px;
+    border: 1px solid var(--color-fg2);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: "Bricolage Grotesque";
+}
+
+input[type="radio"]:checked + label {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+}
