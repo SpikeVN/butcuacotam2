@@ -82,12 +82,24 @@
                 "url": "https://butcuacotam.cte.id.vn/"
             }
         </script>
+
+        <link
+            type="preload"
+            href="./assets//images/landing-graphics.svg"
+            as="image"
+        />
     </head>
     <body>
         <noscript
             >Trình duyệt của bạn đã tắt JavaScript. Bụt của cô Tấm cần
             JavaScript để hoạt động. Bạn cần bật JavaScript để chơi.</noscript
         >
+        <audio preload="auto">
+            <source
+                src="./assets/music/Purrple-Cat-Loading-Screen.ogg"
+                type="audio/ogg"
+            />
+        </audio>
         <div id="root"></div>
 
         <script src="/src/index.tsx" type="module"></script>

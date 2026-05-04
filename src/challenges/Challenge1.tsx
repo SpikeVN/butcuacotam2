@@ -54,7 +54,8 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                             <span class="font-mono text-accent">null</span> cho
                             văn bản hoặc{" "}
                             <span class="font-mono text-accent">NaN</span> cho
-                            số. Lưu ý rằng comment trống không phải là `null` mà
+                            số. Lưu ý rằng comment trống không phải là{" "}
+                            <span class="font-mono text-accent">null</span> mà
                             là chuỗi trống{" "}
                             <span class="font-mono text-accent">
                                 &quot;&quot;
@@ -64,46 +65,54 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                     </ul>
                     <p>Trong các tệp dữ liệu có các trường sau:</p>
                     <table>
-                        <tr>
-                            <th class="font-bold text-accent">Cột</th>
-                            <th class="font-bold text-accent">Dạng</th>
-                            <th class="font-bold text-accent">Mô tả</th>
-                            <th class="font-bold text-accent">Ví dụ</th>
-                        </tr>
-                        <tr>
-                            <td class="font-mono">username</td>
-                            <td>văn bản</td>
-                            <td>tên người comment</td>
-                            <td class="font-mono text-accent">
-                                &quot;@anhtoi&quot;
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="font-mono">accountCreated</td>
-                            <td>YYYY-MM-DD</td>
-                            <td>ngày tạo tài khoản người comment</td>
-                            <td class="font-mono text-accent">2026-05-01</td>
-                        </tr>
-                        <tr>
-                            <td class="font-mono">commentCreated</td>
-                            <td>YYYY-MM-DD</td>
-                            <td>ngày comment</td>
-                            <td class="font-mono text-accent">2026-05-01</td>
-                        </tr>
-                        <tr>
-                            <td class="font-mono">rating</td>
-                            <td>số nguyên</td>
-                            <td>số sao đánh giá</td>
-                            <td class="font-mono text-accent">5</td>
-                        </tr>
-                        <tr>
-                            <td class="font-mono">comment</td>
-                            <td>văn bản</td>
-                            <td>nội dung bình luận</td>
-                            <td class="font-mono text-accent">
-                                &quot;***** góp gạch xây trường&quot;
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th class="font-bold text-accent">Cột</th>
+                                <th class="font-bold text-accent">Dạng</th>
+                                <th class="font-bold text-accent">Mô tả</th>
+                                <th class="font-bold text-accent">Ví dụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-mono">username</td>
+                                <td>văn bản</td>
+                                <td>tên người comment</td>
+                                <td class="font-mono text-accent">
+                                    &quot;@anhtoi&quot;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono">accountCreated</td>
+                                <td>YYYY-MM-DD</td>
+                                <td>ngày tạo tài khoản người comment</td>
+                                <td class="font-mono text-accent">
+                                    2026-05-01
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono">commentCreated</td>
+                                <td>YYYY-MM-DD</td>
+                                <td>ngày comment</td>
+                                <td class="font-mono text-accent">
+                                    2026-05-01
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono">rating</td>
+                                <td>số nguyên</td>
+                                <td>số sao đánh giá</td>
+                                <td class="font-mono text-accent">5</td>
+                            </tr>
+                            <tr>
+                                <td class="font-mono">comment</td>
+                                <td>văn bản</td>
+                                <td>nội dung bình luận</td>
+                                <td class="font-mono text-accent">
+                                    &quot;***** góp gạch xây trường&quot;
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <svg
