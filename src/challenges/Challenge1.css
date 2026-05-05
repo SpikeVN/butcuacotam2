@@ -3,11 +3,10 @@ input[type="radio"] {
 }
 
 label {
-    display: inline-block;
     padding: 12px 24px;
     border: 1px solid var(--color-fg2);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: 100ms ease-out;
     font-family: "Bricolage Grotesque";
 }
 
@@ -15,4 +14,26 @@ input[type="radio"]:checked + label {
     background-color: var(--color-accent);
     color: var(--color-bg);
     border-color: var(--color-accent);
+}
+
+.shadow {
+    box-shadow: 0 4px 0 0 var(--color-shadow);
+    border: solid 1px var(--color-fg2);
+    transition: 100ms ease;
+}
+
+input:focus {
+    outline: none;
+    border: solid 1px var(--color-accent);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: inherit;
 }

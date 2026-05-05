@@ -58,7 +58,9 @@ const StandardWindow: Component<StandardWindowProps> = (props) => {
     const title = () => props.title ?? "Window";
     let contentRef: HTMLDivElement | undefined;
     let windowAPI: StandardWindowAPI | undefined;
-    const windowId = props.id || "default-window";
+    // Generate unique ID if not provided to avoid key collisions between windows
+    const windowId =
+        props.id || `window-${Math.random().toString(36).substr(2, 9)}`;
     const scrollStorageKey = `scroll-pos-${windowId}`;
     const positionStorageKey = `window-pos-${windowId}`;
 
@@ -66,26 +68,65 @@ const StandardWindow: Component<StandardWindowProps> = (props) => {
         windowAPI = api;
         props.apiRef?.(api);
 
-        // Only enable position persistence in development mode
         if (import.meta.env.DEV) {
+            let lastSavedPos: { x: number; y: number } | null = null;
+            let saveTimeout: any;
+            let hasRestoredPosition = false;
+
             // Restore window position on mount
             const savedPos = sessionStorage.getItem(positionStorageKey);
             if (savedPos) {
                 try {
-                    const { x, y } = JSON.parse(savedPos);
-                    api.moveTo(x, y);
+                    const pos = JSON.parse(savedPos);
+                    lastSavedPos = pos;
+                    hasRestoredPosition = true;
+                    // Defer restore to after component fully mounts
+                    Promise.resolve().then(() => {
+                        api.moveTo(pos.x, pos.y);
+                        // Mark as restored to prevent collision with polling
+                        hasRestoredPosition = true;
+                    });
                 } catch {
                     // Ignore parse errors
+                    hasRestoredPosition = true;
                 }
+            } else {
+                hasRestoredPosition = true;
             }
 
-            // Poll for position changes and save them
-            const positionPollInterval = setInterval(() => {
-                const pos = api.getPosition();
-                sessionStorage.setItem(positionStorageKey, JSON.stringify(pos));
-            }, 500);
+            // Debounced position saver
+            const savePosition = () => {
+                if (saveTimeout) clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    const pos = api.getPosition();
+                    // Only save if position changed
+                    if (
+                        !lastSavedPos ||
+                        pos.x !== lastSavedPos.x ||
+                        pos.y !== lastSavedPos.y
+                    ) {
+                        lastSavedPos = pos;
+                        sessionStorage.setItem(
+                            positionStorageKey,
+                            JSON.stringify(pos),
+                        );
+                    }
+                }, 100);
+            };
 
-            onCleanup(() => clearInterval(positionPollInterval));
+            // Poll for position changes with debouncing
+            const positionPollInterval = setInterval(savePosition, 300);
+
+            onCleanup(() => {
+                clearInterval(positionPollInterval);
+                if (saveTimeout) clearTimeout(saveTimeout);
+                // Final save on unmount
+                const finalPos = api.getPosition();
+                sessionStorage.setItem(
+                    positionStorageKey,
+                    JSON.stringify(finalPos),
+                );
+            });
         }
     };
 

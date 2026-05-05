@@ -1,7 +1,8 @@
-import { For } from "solid-js";
+import { createSignal, For, Match, Setter, Signal, Switch } from "solid-js";
 import StandardWindow from "../components/winlib/StandardWindow";
 
 import "./Challenge1.css";
+import { showNotification } from "../engine/notification";
 
 export default function Challenge1(props: { isExiting?: boolean }) {
     return (
@@ -144,7 +145,64 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                         Tính cả cả comment thật lẫn spam/không hợp lệ, tổng cộng
                         có bao nhiêu comment?
                     </p>
-                    <RadioQuestion name="question1" options={["120", "149", "150", "200"]} />
+                    <RadioQuestion
+                        name="question1"
+                        options={["120", "149", "150", "200"]}
+                    />
+
+                    <p class="font-bold">
+                        Có bao nhiêu comment là không hợp lệ?
+                    </p>
+                    <RadioQuestion
+                        name="question2"
+                        options={["120", "149", "150", "200"]}
+                    />
+
+                    <p class="font-bold">Tỉ lệ comment spam dưới 50%.</p>
+                    <TrueOrFalse name="question3" />
+
+                    <p class="font-bold">
+                        Sau khi loại bỏ hết comment không hợp lệ đi, rating
+                        trung bình của shop là bao nhiêu?
+                    </p>
+                    <input
+                        type="number"
+                        name="question4"
+                        class="shadow px-6 py-3 mt-[-0.8rem]"
+                        placeholder="Nhập đáp án số"
+                    />
+
+                    <p class="font-bold">
+                        Sau khi loại bỏ hết comment không hợp lệ đi, rating
+                        trung bình của shop là bao nhiêu?
+                    </p>
+                    <input
+                        type="number"
+                        name="question5"
+                        class="shadow px-6 py-3 mt-[-0.8rem]"
+                        placeholder="Nhập đáp án số"
+                    />
+
+                    <p class="italic">
+                        Những câu hỏi sau đây là tùy chọn, bạn có thể không trả
+                        lời.
+                    </p>
+
+                    <p class="font-bold">
+                        Bạn có thể cho chúng mình biết rằng bạn đã sử dụng định
+                        dạng dataset nào không?
+                    </p>
+                    <RadioQuestion
+                        name="question6"
+                        options={["CSV", "JSON", "Excel", "Scratch sb3"]}
+                    />
+
+                    <p class="font-bold">
+                        Nếu có thể, bạn có thể chia sẻ cho chúng mình tệp bạn
+                        dùng để tính toán được không (dưới 10MB)?
+                    </p>
+
+                    <UploadBeg />
                 </div>
             </div>
         </StandardWindow>
@@ -167,10 +225,173 @@ function RadioQuestion(props: {
                             name={props.name}
                             id={`${props.name}-${children}`}
                         />
-                        <label for={`${props.name}-${children}`}>{children}</label>
+                        <label for={`${props.name}-${children}`}>
+                            {children}
+                        </label>
                     </>
                 )}
             </For>
         </div>
+    );
+}
+
+function TrueOrFalse(props: { name: string; onSubmit?: () => void }) {
+    let trueinp!: HTMLInputElement;
+    let falseinp!: HTMLInputElement;
+    const [selectedValue, setSelectedValue] = createSignal<string>("");
+
+    const handleChange = (value: string) => {
+        setSelectedValue(value);
+    };
+
+    return (
+        <div class="flex flex-row gap-3 mt-[-0.8rem]">
+            <input
+                ref={trueinp}
+                type="radio"
+                class="mcq-input"
+                name={props.name}
+                id={`${props.name}-true`}
+                onChange={() => handleChange("true")}
+            />
+            <label
+                for={`${props.name}-true`}
+                class="flex flex-row gap-1.5 items-center"
+            >
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M20 6L9 17L4 12"
+                        stroke={
+                            selectedValue() === "true"
+                                ? "var(--color-bg)"
+                                : "var(--color-fg)"
+                        }
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+
+                <span>Đúng</span>
+            </label>
+
+            <input
+                ref={falseinp}
+                type="radio"
+                class="mcq-input"
+                name={props.name}
+                id={`${props.name}-false`}
+                onChange={() => handleChange("false")}
+            />
+            <label
+                for={`${props.name}-false`}
+                class="flex flex-row gap-1.5 items-center"
+            >
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M18 6L6 18M6 6L18 18"
+                        stroke={
+                            selectedValue() === "false"
+                                ? "var(--color-bg)"
+                                : "var(--color-fg)"
+                        }
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+                <span>Sai</span>
+            </label>
+        </div>
+    );
+}
+
+function UploadBeg() {
+    let [fileUpload, setFileUpload] = createSignal([false, null]);
+    let filinput!: HTMLInputElement;
+    return (
+        <>
+            <input
+                ref={filinput}
+                type="file"
+                name="question7"
+                id="fileupload"
+                class="hidden"
+                placeholder="Nhập đáp án số"
+                onChange={(f) => {
+                    if (
+                        filinput.files &&
+                        filinput.files[0].size > 10 * 1024 * 1024
+                    ) {
+                        showNotification(
+                            "Nhắc bạn",
+                            "File bạn upload vượt quá 10MB cho phép.",
+                            3000,
+                        );
+                        return;
+                    }
+
+                    console.log(filinput);
+                    // @ts-ignore
+                    setFileUpload([true, filinput.files[0]]);
+                }}
+            />
+            <Switch
+                fallback={
+                    <label
+                        for="fileupload"
+                        class="bg-bg shadow mt-[-0.8rem] w-fit px-6 flex flex-row items-center justify-center"
+                    >
+                        <span class="ml-1.5">
+                            Đã upload{" "}
+                            <span class="font-mono text-accent">
+                                {/* @ts-ignore */}
+
+                                {fileUpload()[1].name}
+                            </span>{" "}
+                            {/* @ts-ignore */}(
+                            {(fileUpload()[1].size / 1024).toFixed(2)} KB)
+                        </span>
+                    </label>
+                }
+            >
+                <Match when={!fileUpload()[0]}>
+                    <label
+                        for="fileupload"
+                        class="bg-fg2 btn mt-[-0.8rem] w-fit px-6 flex flex-row items-center justify-center"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-upload-icon lucide-upload"
+                        >
+                            <path d="M12 3v12" />
+                            <path d="m17 8-5-5-5 5" />
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        </svg>
+                        <span class="ml-1.5">Bấm để upload file</span>
+                    </label>
+                </Match>
+            </Switch>
+        </>
     );
 }
