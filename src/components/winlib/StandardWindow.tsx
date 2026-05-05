@@ -1,4 +1,4 @@
-import { type Component, type JSX } from "solid-js";
+import { type Component, type JSX, onMount, onCleanup } from "solid-js";
 import DraggableWindow, { type DraggableWindowAPI } from "./DraggableWindow";
 import "./styles/StandardWindow.css";
 
@@ -56,11 +56,76 @@ interface StandardWindowProps {
 
 const StandardWindow: Component<StandardWindowProps> = (props) => {
     const title = () => props.title ?? "Window";
+    let contentRef: HTMLDivElement | undefined;
+    let windowAPI: StandardWindowAPI | undefined;
+    const windowId = props.id || "default-window";
+    const scrollStorageKey = `scroll-pos-${windowId}`;
+    const positionStorageKey = `window-pos-${windowId}`;
+
+    const handleApiRef = (api: StandardWindowAPI) => {
+        windowAPI = api;
+        props.apiRef?.(api);
+
+        // Only enable position persistence in development mode
+        if (import.meta.env.DEV) {
+            // Restore window position on mount
+            const savedPos = sessionStorage.getItem(positionStorageKey);
+            if (savedPos) {
+                try {
+                    const { x, y } = JSON.parse(savedPos);
+                    api.moveTo(x, y);
+                } catch {
+                    // Ignore parse errors
+                }
+            }
+
+            // Poll for position changes and save them
+            const positionPollInterval = setInterval(() => {
+                const pos = api.getPosition();
+                sessionStorage.setItem(positionStorageKey, JSON.stringify(pos));
+            }, 500);
+
+            onCleanup(() => clearInterval(positionPollInterval));
+        }
+    };
+
+    // Only enable scroll preservation in development mode
+    if (import.meta.env.DEV) {
+        onMount(() => {
+            // Restore scroll position on mount
+            if (contentRef) {
+                const savedScroll = sessionStorage.getItem(scrollStorageKey);
+                if (savedScroll) {
+                    const scrollPos = parseInt(savedScroll, 10);
+                    contentRef.scrollTop = scrollPos;
+                }
+            }
+        });
+
+        onCleanup(() => {
+            // Save scroll position before unmount
+            if (contentRef) {
+                sessionStorage.setItem(
+                    scrollStorageKey,
+                    contentRef.scrollTop.toString(),
+                );
+            }
+        });
+    }
+
+    const handleScroll = () => {
+        if (import.meta.env.DEV && contentRef) {
+            sessionStorage.setItem(
+                scrollStorageKey,
+                contentRef.scrollTop.toString(),
+            );
+        }
+    };
 
     return (
         <DraggableWindow
             id={props.id}
-            apiRef={props.apiRef}
+            apiRef={handleApiRef}
             title={props.title}
             draggableMode={props.draggableMode ?? "selector"}
             draggableHeight={props.draggableHeight}
@@ -84,11 +149,13 @@ const StandardWindow: Component<StandardWindowProps> = (props) => {
                     {title()}
                 </div>
                 <div
+                    ref={contentRef}
                     class="standard-content thick-shadow"
                     classList={{
                         "no-padding": props.noPadding,
                         "no-spacing": props.noTitlebarSpacing,
                     }}
+                    onScroll={handleScroll}
                 >
                     {props.children}
                 </div>
