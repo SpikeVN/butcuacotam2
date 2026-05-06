@@ -3,7 +3,7 @@ import gsap from "gsap";
 
 import { GameStage } from "../types";
 
-import landingGraphics from "../../assets/images/landing-graphics.svg";
+import landingGraphics from "../../assets/images/landing-graphics.avif";
 import "./styles/MainMenu.css";
 
 export default function MainMenu(props: {

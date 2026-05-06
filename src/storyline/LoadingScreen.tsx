@@ -4,9 +4,9 @@ import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { SplitText } from "gsap/SplitText";
 import { TextPlugin } from "gsap/TextPlugin";
 
-import ftuLogoFile from "../../assets/images/FTU_logo.png";
-import fyuLogoFile from "../../assets/images/fyu.png";
-import ntqLogoFile from "../../assets/images/NTQ-logo.png";
+import ftuLogoFile from "../../assets/images/FTU_logo.avif";
+import fyuLogoFile from "../../assets/images/fyu.avif";
+import ntqLogoFile from "../../assets/images/NTQ-logo.avif";
 import AudioManager from "../engine/audioManager";
 
 gsap.registerPlugin(TextPlugin, ScrambleTextPlugin, SplitText);
@@ -14,10 +14,10 @@ gsap.registerPlugin(TextPlugin, ScrambleTextPlugin, SplitText);
 const LOGO_ANIMATION_DURATION_SECS = 0.8;
 
 export default function LoadingScreen(props: { doneCallback: () => void }) {
-    const [showingLogo, setShowingLogo] = createSignal(-1);
+    const [showingLogo, setShowingLogo] = createSignal(3);
 
     const nextLogo = () => {
-        if (showingLogo() == 2) {
+        if (showingLogo() == 3) {
             props.doneCallback();
             return;
         }
@@ -60,6 +60,9 @@ export default function LoadingScreen(props: { doneCallback: () => void }) {
                 </Match>
                 <Match when={showingLogo() == 2}>
                     <LogoNTQ doneCallback={nextLogo} />
+                </Match>
+                <Match when={showingLogo() == 3}>
+                    <FakeDDLC doneCallback={nextLogo} />
                 </Match>
             </Switch>
         </div>
@@ -385,6 +388,90 @@ function LogoNTQ(props: { doneCallback: () => void }) {
                     data-preload
                 />
             </div>
+        </div>
+    );
+}
+
+function FakeDDLC(props: { doneCallback: () => void }) {
+    let text!: HTMLDivElement;
+
+    let sentences = [
+        <>
+            This&ZeroWidthSpace; game&ZeroWidthSpace; should&ZeroWidthSpace;
+            be&ZeroWidthSpace; suitable&ZeroWidthSpace; for&ZeroWidthSpace;
+            children&ZeroWidthSpace; <br /> or&ZeroWidthSpace;
+            those&ZeroWidthSpace; who&ZeroWidthSpace; are&ZeroWidthSpace;
+            easily&ZeroWidthSpace; disturbed.
+        </>,
+        <>
+            This&ZeroWidthSpace; game&ZeroWidthSpace; should&ZeroWidthSpace;
+            be&ZeroWidthSpace; suitable&ZeroWidthSpace; for&ZeroWidthSpace;
+            children&ZeroWidthSpace; <br /> or&ZeroWidthSpace;
+            those&ZeroWidthSpace; who&ZeroWidthSpace; are&ZeroWidthSpace;
+            easily&ZeroWidthSpace; dismembered.
+        </>,
+        <>
+            I&ZeroWidthSpace; have&ZeroWidthSpace; NOT&ZeroWidthSpace;
+            granted&ZeroWidthSpace; kids&ZeroWidthSpace; to&ZeroWidthSpace; hell
+        </>,
+        <>
+            You&ZeroWidthSpace; are&ZeroWidthSpace; my&ZeroWidthSpace; sunshine <br />
+            My&ZeroWidthSpace; only&ZeroWidthSpace; sunshine <br />
+            You&ZeroWidthSpace; make&ZeroWidthSpace; me&ZeroWidthSpace; happy <br />
+            When&ZeroWidthSpace; skies&ZeroWidthSpace; are&ZeroWidthSpace; gray
+        </>,
+        <>
+            そば&ZeroWidthSpace;に&ZeroWidthSpace;いたい&ZeroWidthSpace;よ
+            <br />
+            君&ZeroWidthSpace;の&ZeroWidthSpace;ために&ZeroWidthSpace;出来る&ZeroWidthSpace;こと&ZeroWidthSpace;が
+            僕&ZeroWidthSpace;に&ZeroWidthSpace;ある&ZeroWidthSpace;かな？
+        </>,
+    ];
+
+    onMount(() => {
+        let split = SplitText.create(text!, {
+            type: "words",
+            wordDelimiter: "\u200b",
+        });
+
+        gsap.timeline()
+            .from(
+                split.words,
+                {
+                    duration: LOGO_ANIMATION_DURATION_SECS,
+                    y: 50,
+                    alpha: 0,
+                    ease: "expo.out",
+                    stagger:
+                        LOGO_ANIMATION_DURATION_SECS /
+                        text.textContent.split("\u200b").length,
+                    filter: "blur(5px)",
+                },
+                "<",
+            )
+            .from(
+                split.words,
+                {
+                    duration: LOGO_ANIMATION_DURATION_SECS,
+                    x: text.offsetWidth,
+                },
+                "<",
+            )
+            .to(split.words, {
+                autoAlpha: 0,
+                duration: LOGO_ANIMATION_DURATION_SECS,
+                delay: LOGO_ANIMATION_DURATION_SECS,
+            })
+            .then(() => {
+                props.doneCallback();
+            });
+    });
+
+    return (
+        <div class="h-full w-full flex items-center justify-center">
+            <p ref={text} class="text-2xl leading-8 text-center">
+                {sentences[Math.floor(Math.random() * sentences.length)]}
+            </p>
         </div>
     );
 }

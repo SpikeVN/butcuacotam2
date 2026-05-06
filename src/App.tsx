@@ -1,5 +1,5 @@
 /**
- *  Mã nguồn của Vấn Danh - Game tiền sự kiện DSTC 2026
+ *  Mã nguồn của Bụt của Cô Tấm - Game tiền sự kiện DSTC 2026
  *  Copyright (C) 2026  CLB KHCN trong Kinh tế và Kinh doanh
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ const App: Component = () => {
     let [stage, setStage] = createSignal(GameStage.LOADING_SCREEN);
 
     if (import.meta.env.DEV) {
-        setStage(GameStage.PLAY);
+        setStage(GameStage.LOADING_SCREEN);
     }
 
     registerEvent("changescreen_loading", () =>
