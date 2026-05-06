@@ -14,7 +14,7 @@
     height: 100%;
     opacity: 0.04;
     z-index: -1;
-    background: url("/assets/images/noise.png");
+    background: url("/assets/images/noise.avif");
     image-rendering: -moz-crisp-edges;
     image-rendering: pixelated;
 }
