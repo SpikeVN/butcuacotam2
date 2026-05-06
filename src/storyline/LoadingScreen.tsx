@@ -14,7 +14,7 @@ gsap.registerPlugin(TextPlugin, ScrambleTextPlugin, SplitText);
 const LOGO_ANIMATION_DURATION_SECS = 0.8;
 
 export default function LoadingScreen(props: { doneCallback: () => void }) {
-    const [showingLogo, setShowingLogo] = createSignal(3);
+    const [showingLogo, setShowingLogo] = createSignal(-1);
 
     const nextLogo = () => {
         if (showingLogo() == 3) {
@@ -408,16 +408,18 @@ function FakeDDLC(props: { doneCallback: () => void }) {
             be&ZeroWidthSpace; suitable&ZeroWidthSpace; for&ZeroWidthSpace;
             children&ZeroWidthSpace; <br /> or&ZeroWidthSpace;
             those&ZeroWidthSpace; who&ZeroWidthSpace; are&ZeroWidthSpace;
-            easily&ZeroWidthSpace; dismembered.
+            easily&ZeroWidthSpace; membered.
         </>,
         <>
             I&ZeroWidthSpace; have&ZeroWidthSpace; NOT&ZeroWidthSpace;
             granted&ZeroWidthSpace; kids&ZeroWidthSpace; to&ZeroWidthSpace; hell
         </>,
         <>
-            You&ZeroWidthSpace; are&ZeroWidthSpace; my&ZeroWidthSpace; sunshine <br />
+            You&ZeroWidthSpace; are&ZeroWidthSpace; my&ZeroWidthSpace; sunshine{" "}
+            <br />
             My&ZeroWidthSpace; only&ZeroWidthSpace; sunshine <br />
-            You&ZeroWidthSpace; make&ZeroWidthSpace; me&ZeroWidthSpace; happy <br />
+            You&ZeroWidthSpace; make&ZeroWidthSpace; me&ZeroWidthSpace; happy{" "}
+            <br />
             When&ZeroWidthSpace; skies&ZeroWidthSpace; are&ZeroWidthSpace; gray
         </>,
         <>
