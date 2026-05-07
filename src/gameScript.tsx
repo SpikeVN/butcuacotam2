@@ -6,8 +6,8 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
     "intro_game1": [
         // ===== SECTION 1 =====
         // ----- lead-in -----
-/* 0 */ ["s1.blank", "System", "*Ở một ngôi làng bé nhỏ xưa kia, có hai chị em cùng cha khác mẹ tên là Tấm và Cám.*"],
-/* 1 */ ["s1.blank", "System", "*Ở một thị trấn bé nhỏ khác, cũng có hai chị em tên là Tấm và Cám.*"],
+/* 0 */ ["s1.blank", "System", "*Ngày xửa ngày xưa, tại một ngôi làng nhỏ, có hai chị em cùng cha khác mẹ là Tấm và Cám.*"],
+/* 1 */ ["s1.blank", "System", "*Ngày nảy ngày nay, ở thế kỉ 21, trong một căn nhà mặt phố ở Chùa Bộc - Hà Nội, cũng có hai chị em là Cám và Tấm.*"],
 /* 2 */ ["s1.blank", "System", "*Cha Tấm hết mực yêu thương cô, nhưng sau đó không lâu ông cũng qua đời. Tấm phải sống chung với mụ dì ghẻ cay nghiệt.*"],
 /* 3 */ ["s1.blank", "System", "*Cám được lêu lổng vui chơi hằng ngày. Cuộc sống của Tấm lại ngập trong thùng hàng Shopee và quần áo chưa gấp.*"],
 
