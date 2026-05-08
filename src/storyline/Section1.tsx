@@ -100,7 +100,7 @@ function TicketWindow(props: { isExiting?: boolean }) {
                 <div class="border border-fg2 bg-bg p-4.5 flex flex-col gap-2 relative overflow-hidden">
                     <div class="relative z-10 flex flex-col gap-1">
                         <h3 class="font-bold text-fg text-[16px]">
-                            Kinh tế Quốc tế Tôi
+                            Anh Tôi
                         </h3>
                         <div class="flex items-center gap-2 text-fg/80 text-[14px]">
                             <svg

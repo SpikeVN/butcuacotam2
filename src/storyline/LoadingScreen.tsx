@@ -471,7 +471,14 @@ function FakeDDLC(props: { doneCallback: () => void }) {
 
     return (
         <div class="h-full w-full flex items-center justify-center">
-            <p ref={text} class="text-2xl leading-8 text-center">
+            <p
+                ref={text}
+                class="text-2xl leading-8 text-center"
+                style={{
+                    "font-family":
+                        "'Bricolage Grotesque', 'Noto Sans JP', sans-serif;",
+                }}
+            >
                 {sentences[Math.floor(Math.random() * sentences.length)]}
             </p>
         </div>
