@@ -1,36 +1,36 @@
-name: Deploy to GitHub Pages
+name: amogus
 
 on:
-    push:
-        branches: "main"
+  push:
+    branches: ["main"]
 
 jobs:
-    build_site:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+  build_site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Install JS runtime
-              uses: oven-sh/setup-bun@v2
+      - name: Install JS runtime
+        uses: oven-sh/setup-bun@v2
 
-            - name: Install dependencies
-              env:
-                SPELLBOOK: ${{ secrets.SPELLBOOK }}
-              run: | 
-                bun install
-                echo "$SPELLBOOK" > spellbook.json
+      - name: Install dependencies
+        env:
+          SPELLBOOK: ${{ secrets.SPELLBOOK }}
+        run: |
+          bun install
+          echo "$SPELLBOOK" > spellbook.json
 
-            - name: build
-              env:
-                API_ENDPOINT: ${{ vars.API_ENDPOINT }}
-              run: |
-                  bun run build
+      - name: build
+        env:
+          API_ENDPOINT: ${{ vars.API_ENDPOINT }}
+        run: |
+          bun run build
 
-            - name: Deploy
-              uses: cloudflare/wrangler-action@v3
-              with:
-                apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-                accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-                command: pages deploy dist --project-name=chimse
-                gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=chimse
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
