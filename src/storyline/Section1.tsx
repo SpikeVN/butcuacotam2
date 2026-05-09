@@ -256,7 +256,7 @@ function ChallengeShock(props: { isExiting?: boolean }) {
         observer.disconnect();
     });
 
-    fetch(`${import.meta.env.BASE_URL}/challenges/1/dataset.json`).then((r) => {
+    fetch(`/challenges/1/dataset.json`).then((r) => {
         r.json().then((j) => {
             setDataset(j);
         });
@@ -442,7 +442,7 @@ function DatasetWindow(props: { isExiting?: boolean }) {
 
                 <div class="w-full grid grid-rows-2 grid-cols-2 gap-3 justify-center items-center">
                     <a
-                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.xlsx`}
+                        href="/challenges/1/dataset.xlsx"
                         class="btn"
                         target="_blank"
                     >
@@ -450,7 +450,7 @@ function DatasetWindow(props: { isExiting?: boolean }) {
                         .xlsx
                     </a>
                     <a
-                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.xlsx`}
+                        href="/challenges/1/dataset.xlsx"
                         class="btn"
                         target="_blank"
                     >
@@ -458,7 +458,7 @@ function DatasetWindow(props: { isExiting?: boolean }) {
                         .csv
                     </a>
                     <a
-                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.sb3`}
+                        href="/challenges/1/dataset.sb3"
                         class="btn"
                         target="_blank"
                     >
@@ -466,7 +466,7 @@ function DatasetWindow(props: { isExiting?: boolean }) {
                         .sb3
                     </a>
                     <a
-                        href={`${import.meta.env.BASE_URL}/challenges/1/dataset.json`}
+                        href="/challenges/1/dataset.json"
                         class="btn"
                         target="_blank"
                     >

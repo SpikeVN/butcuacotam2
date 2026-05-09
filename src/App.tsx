@@ -24,13 +24,13 @@ import MainMenu from "./storyline/MainMenu";
 import Game from "./storyline/Game";
 import { registerEvent } from "./engine/events";
 import NotificationSystem from "./components/winlib/NotificationSystem";
-import { loadUserdata } from "./engine/userdata";
+import { loadUserdata, handleSpellFromUrl, saveUserdata } from "./engine/userdata";
 
 const App: Component = () => {
     let [stage, setStage] = createSignal(GameStage.LOADING_SCREEN);
 
     if (import.meta.env.DEV) {
-        setStage(GameStage.LOADING_SCREEN);
+        setStage(GameStage.PLAY);
     }
 
     registerEvent("changescreen_loading", () =>
@@ -45,6 +45,13 @@ const App: Component = () => {
     registerEvent("changescreen_credits", () => setStage(GameStage.CREDITS));
 
     loadUserdata();
+    handleSpellFromUrl();
+
+    document.addEventListener("visibilitychange", async () => {
+        if (document.visibilityState === "hidden") {
+            await saveUserdata();
+        }
+    });
 
     return (
         <>

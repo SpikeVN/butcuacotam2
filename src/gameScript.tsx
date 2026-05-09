@@ -8,8 +8,9 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
         // ----- lead-in -----
 /* 0 */ ["s1.blank", "System", "*Ở một ngôi làng bé nhỏ xưa kia, có hai chị em cùng cha khác mẹ tên là Tấm và Cám.*"],
 /* 1 */ ["s1.blank", "System", "*Còn tại một ngôi nhà mặt phố Hà Nội, cũng có hai chị em tên là Tấm và Cám.*"],
-/* 2 */ ["s1.blank", "System", "*Cha Tấm hết mực yêu thương cô, song chẳng bao lâu thì ông qua đời, để lại Tấm chung mái nhà với mụ dì ghẻ lắm điều và người em gái luôn xem bà chị như cái gai trước mắt.*"],
-/* 3 */ ["s1.blank", "System", "*Hẳn nhiên là trừ khi sai khiến cái gai ấy đi ép hộ filter.*"],
+/* 2 */ ["s1.blank", "System", "*Cha Tấm hết mực yêu thương cô, song chẳng bao lâu thì ông qua đời.*"],
+        ["s1.blank", "System", "*Tấm từ đó sống chung mái nhà với mụ dì ghẻ lắm điều và người em gái luôn xem bà chị như cái gai trước mắt.*"],
+/* 3 */ ["s1.blank", "System", "*Hẳn nhiên là trừ khi nó sai khiến cái gai ấy đi làm những việc mà nó không muốn làm.*"],
 /* 4 */ ["s1.blank", "System", "*Trong khi Cám hàng ngày la cà check-in, lên story, bóp ảnh; thì cuộc đời Tấm lại ngập tràn những đơn hàng trên sàn S và đống quần áo chưa gấp.*"],
 
 /* 5 */ ["s1.leadin", "Cám", "Tấm! Phần mới trong cái clip Morning Routine em quay hôm qua chị edit xong chưa? Phần cũ em đăng từ tối qua mà giờ này mới có 7 tim :((", () => {

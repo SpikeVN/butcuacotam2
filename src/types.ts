@@ -8,7 +8,6 @@ export enum GameStage {
 }
 
 export interface Progress {
-    name: string;
     timestamp: number;
     path: string;
     index: number;
@@ -17,6 +16,5 @@ export interface Progress {
 export interface UserData {
     name: string;
     email: string;
-    currentSave: string;
-    saves: { [key: string]: Progress };
+    progress: Progress ;
 }
