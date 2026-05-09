@@ -6,8 +6,11 @@ on:
     branches: ["main"]
 
 jobs:
-  build_site:
+  deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,16 +19,16 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        env:
-          SPELLBOOK: ${{ secrets.SPELLBOOK }}
         run: |
           bun install
-          echo "$SPELLBOOK" > spellbook.json
+          
 
       - name: build
         env:
           API_ENDPOINT: ${{ vars.API_ENDPOINT }}
+          SPELLBOOK: ${{ secrets.SPELLBOOK }}
         run: |
+          echo "$SPELLBOOK" > spellbook.json
           bun run build
 
       - name: Deploy
@@ -33,5 +36,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=chimse
+          command: pages deploy dist --project-name=butcuacotam
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
