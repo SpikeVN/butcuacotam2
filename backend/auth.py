@@ -3,7 +3,7 @@ from typing import Optional
 from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
-from backend.config import settings
+from config import settings
 
 # Since the client uses credentials: "include", it might be using cookies.
 # But the request says "The authentication scheme shall be a jwt token".

@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import Column, String, Text, Integer, LargeBinary
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from backend.config import settings
+from config import settings
 
 
 class Base(DeclarativeBase):
