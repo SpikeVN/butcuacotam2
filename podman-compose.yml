@@ -1,8 +1,6 @@
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Containerfile
+    image: ghcr.io/SpikeVN/butbase:latest
     container_name: butbase-backend
     restart: always
     ports:
