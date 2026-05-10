@@ -7,6 +7,8 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/build-backend.yml'
+      - 'podman-compose.yml'
+  workflow_dispatch:
 
 jobs:
   build-and-push:
