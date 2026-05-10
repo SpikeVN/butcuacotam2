@@ -19,8 +19,8 @@ from sqlalchemy.future import select
 from typing import List
 from contextlib import asynccontextmanager
 
-from backend.config import settings
-from backend.models import (
+from config import settings
+from models import (
     RegisterRequest,
     TokenRequest,
     TokenResponse,
@@ -28,8 +28,8 @@ from backend.models import (
     Progress,
     UserAnswer,
 )
-from backend.db import get_db, init_db, User, Answer, UploadedFile, Checkpoint
-from backend.auth import create_access_token, get_current_user_hash
+from db import get_db, init_db, User, Answer, UploadedFile, Checkpoint
+from auth import create_access_token, get_current_user_hash
 
 # Logging setup
 log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
