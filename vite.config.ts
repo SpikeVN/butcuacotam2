@@ -13,6 +13,10 @@ export default defineConfig({
   base: "/",
   server: {
     port: 3000,
+    watch: {
+      usePolling: true,
+      ignored: ['backend/**', '**/logs/*.log']
+    }
   },
   build: {
     target: 'esnext',
@@ -30,4 +34,5 @@ export default defineConfig({
     cssMinify: true,
   },
   publicDir: "static",
+
 });

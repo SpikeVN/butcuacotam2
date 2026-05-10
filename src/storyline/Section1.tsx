@@ -1,5 +1,5 @@
 import { createSignal, onCleanup, Show, For, onMount } from "solid-js";
-import { sceneIs } from "../engine/script";
+import { sceneIs, setScript, switchPath } from "../engine/script";
 import VisualNovelTextWindow from "../components/VisualNovelTextWindow";
 import FullScreenNarrator from "../components/FullScreenNarrator";
 import StandardWindow from "../components/winlib/StandardWindow";
@@ -10,8 +10,9 @@ import "./styles/Section1.css";
 
 import camLuxuryLogo from "../../assets/images/camluxury.svg";
 import Challenge1 from "../challenges/Challenge1";
+import { saveUserdata } from "../engine/userdata";
 
-export default function Section1() {
+export default function Section1(props: { isExiting: boolean }) {
     let [showChallenge, setShowChallenge] = createSignal(false);
 
     const cleanup = registerEvent("s1_challenge_shock_open", () => {
@@ -23,31 +24,38 @@ export default function Section1() {
     return (
         <>
             <AnimatedShow when={!sceneIs(1, "blank")}>
-                {(exiting) => <VisualNovelTextWindow isExiting={exiting} />}
+                {(exiting) => (
+                    <VisualNovelTextWindow
+                        isExiting={exiting || props.isExiting}
+                    />
+                )}
             </AnimatedShow>
-            <AnimatedShow
-                when={
-                    sceneIs(1, "leadin", "challenge_shock") ||
-                    (showChallenge() && !sceneIs(1, "challenge"))
-                }
-            >
+            <AnimatedShow when={sceneIs(1, "leadin", "challenge_shock")}>
                 {(exiting) => (
                     <>
-                        <TicketWindow isExiting={exiting} />
-                        <CapCut isExiting={exiting} />
+                        <TicketWindow isExiting={exiting || props.isExiting} />
+                        <CapCut isExiting={exiting || props.isExiting} />
                     </>
                 )}
             </AnimatedShow>
 
             <AnimatedShow when={sceneIs(1, "challenge_shock")}>
-                {(exiting) => <ChallengeShock isExiting={exiting} />}
+                {(exiting) => (
+                    <ChallengeShock isExiting={exiting || props.isExiting} />
+                )}
             </AnimatedShow>
 
             <AnimatedShow when={sceneIs(1, "challenge")}>
                 {(exiting) => (
                     <>
-                        <Challenge1 isExiting={exiting} />
-                        <DatasetWindow isExiting={exiting} />
+                        <Challenge1
+                            isExiting={exiting || props.isExiting}
+                            onComplete={() => {
+                                switchPath("game_1_success", 0);
+                                saveUserdata();
+                            }}
+                        />
+                        <DatasetWindow isExiting={exiting || props.isExiting} />
                     </>
                 )}
             </AnimatedShow>
@@ -55,6 +63,12 @@ export default function Section1() {
             <Show when={sceneIs(1, "blank")}>
                 <FullScreenNarrator />
             </Show>
+
+            <AnimatedShow when={sceneIs(1, "success")}>
+                {(exiting) => (
+                    <SuccessWindow isExiting={exiting || props.isExiting} />
+                )}
+            </AnimatedShow>
         </>
     );
 }
@@ -488,3 +502,32 @@ const IconDownload = () => (
         />
     </svg>
 );
+
+function SuccessWindow(props: { isExiting: boolean }) {
+    return (
+        <StandardWindow
+            title="Thử thách"
+            isExiting={props.isExiting}
+            initialWidth={900}
+            initialHeight={500}
+            draggableMode="anywhere"
+        >
+            <div class="w-full h-full flex flex-col items-center justify-center py-3">
+                <img
+                    class="absolute top-[24px]"
+                    src={camLuxuryLogo}
+                    alt="Logo Cám Luxury"
+                />
+
+                <div class="flex flex-col gap-1.5">
+                    <h1 class="font-serif text-4xl italic text-accent font-medium">
+                        Xin chúc mừng!
+                    </h1>
+                    <p>Bạn đã hoàn thành thử thách.</p>
+                </div>
+
+                <br />
+            </div>
+        </StandardWindow>
+    );
+}

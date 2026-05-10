@@ -18,7 +18,7 @@ import {
 } from "../engine/userdata";
 import { IconArrowRight } from "../storyline/AuthenticationGuard";
 
-export default function Challenge1(props: { isExiting?: boolean }) {
+export default function Challenge1(props: { isExiting?: boolean; onComplete: () => void }) {
     onMount(() => {
         setCheckpoint("challengeOneStart");
     });
@@ -172,6 +172,7 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                         );
 
                         setCheckpoint("challengeOneComplete");
+                        props.onComplete();
                     }}
                 >
                     <p class="font-bold">

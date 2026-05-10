@@ -1,12 +1,15 @@
 ﻿import { showNotification } from "./engine/notification";
 import { ScriptEntry } from "./engine/script";
+import { saveUserdata, setCheckpoint } from "./engine/userdata";
 
 // prettier-ignore
 export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
     "intro_game1": [
         // ===== SECTION 1 =====
         // ----- lead-in -----
-/* 0 */ ["s1.blank", "System", "*Ở một ngôi làng bé nhỏ xưa kia, có hai chị em cùng cha khác mẹ tên là Tấm và Cám.*"],
+/* 0 */ ["s1.blank", "System", "*Ở một ngôi làng bé nhỏ xưa kia, có hai chị em cùng cha khác mẹ tên là Tấm và Cám.*", () => {
+            setCheckpoint("firstStartScript");
+        }],
 /* 1 */ ["s1.blank", "System", "*Còn tại một ngôi nhà mặt phố Hà Nội, cũng có hai chị em tên là Tấm và Cám.*"],
 /* 2 */ ["s1.blank", "System", "*Cha Tấm hết mực yêu thương cô, song chẳng bao lâu thì ông qua đời.*"],
         ["s1.blank", "System", "*Tấm từ đó sống chung mái nhà với mụ dì ghẻ lắm điều và người em gái luôn xem bà chị như cái gai trước mắt.*"],
@@ -36,21 +39,65 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
 /* 20*/ ["s1.challenge_shock", "Dì ghẻ", "Nào Cám! Đi với mẹ chuẩn bị đồ. Tối nay hai mẹ con mình đi concert, nghe đồn có nhiều anh được lắm!"],
 /* 21*/ ["s1.challenge_shock", "Cám", "Biết rồi mẹ, con đang chọn outfit chụp ảnh đây."],
 /* 21*/ ["s1.challenge_shock", "System", "*Mụ đóng sập cửa. Tấm ngồi một mình giữa đống việc chồng chất.*"],
-/* 22*/ ["s1.challenge", "Tấm", "Ông Bụt ơi! Nếu ông có linh ứng, xin hãy giúp con với!"],
+/* 22*/ ["s1.challenge", "Tấm", "Ông Bụt ơi! Xin ông hãy giúp con với!"],
     ],
 
     "game_1_success": [
-        ["s1.success", "Dì ghẻ", "Tấm! Tao về rồi đây, mày làm xong chưa hay lại ngồi-"],
+        ["s1.success", "Dì ghẻ", "TẤM!!! Tao về rồi đây, mày làm xong chưa hay lại ngồi-"],
         ["s1.success", "System", "*Mụ dừng lại giữa câu. Liếc nhìn màn hình của Tấm, mụ thấy cả núi công việc chẳng mấy chốc đã hoàn thành.*"],
         ["s1.success", "Dì ghẻ", "..."],
         ["s1.success", "Dì ghẻ", "X... xong rồi hả?"],
         ["s1.success", "Tấm", "Dạ. Con gửi báo cáo tổng hợp vào mail của mẹ rồi ạ. Con còn tính cả các số liệu liên quan, phòng khi mẹ cần."],
-        ["s1.success", "Dì ghẻ", "Không... không thể nào! Cái máy tính của mày... cái máy đấy tao nhớ là mở Chrome còn lag cơ mà? Sao mày chạy được cả triệu dòng thế này? Mày... mày..."],
+        ["s1.success", "Dì ghẻ", "Không... không thể nào! Cái máy tính của mày... cái máy đấy tao nhớ là mở Chrome còn lag cơ mà? Sao mày chạy được hết thế này? Mày... mày..."],
         ["s1.success", "Tấm", "*mỉm cười*"],
         ["s1.success", "Dì ghẻ", "Đấy! Mày nhìn chị mày đi Cám! Suốt ngày chỉ biết nhảy nhót lung tung, trong khi con Tấm nó chạy rầm rầm thế này đây!"],
-        ["s1.success", "Dì ghẻ", "Ơ... sao mẹ mắng con..."],
+        ["s1.success", "Cám", "Ơ... sao mẹ mắng con..."],
         ["s1.success", "System", "*Hình như dì ghẻ quay sang mắng Cám để chữa thẹn. Nhưng mà có vẻ không thành công lắm.*"],
         ["s1.success", "Dì ghẻ", "Thôi được rồi. Coi như hôm nay mày gặp may. Nhưng đừng tưởng thế là xong nhé. Tao cấm mày vác cái xác đấy đi concert. Xấu hết cả mặt tao với em mày."],
-        ["s1.success", "System", "*Dì ghẻ lại quay đi. Miệng vẫn đang lẩm bẩm gì đấy. Không biết sắp tới mụ sẽ giở chiêu trò gì.*"]
+        ["s1.success", "System", "*Dì ghẻ lại quay đi. Miệng vẫn đang lẩm bẩm gì đấy cũng không rõ.*", () => {
+            setCheckpoint("sectionOneComplete");
+            saveUserdata();
+        }],
+
+        ["s2.blank", "System", "*Chẳng mấy chốc đã đến ngày concert.*"],
+        ["s2.blank", "System", "*Nhưng Tấm (và chắc là biên kịch của game này nữa) không tin rằng dì ghẻ sẽ buông tha cho Tấm dễ dàng như vậy.*"],
+        ["s2.blank", "System", "*Tấm ngoảnh ra khỏi màn hình một lúc lâu.*", () => {
+            showNotification("Thư từ Vấn Danh Concert", "Tấm ơi, đêm concert sắp đến rồi! Hẹn gặp bạn ở concert Vấn Danh nhé!", 5000);
+        }],
+        ["s2.leadin", "Tấm", "Vé VIP... mà không được đi. Thôi vậy chứ biết sao giờ..."],
+        ["s2.turnoff", "Tấm", "Haizzz... tắt máy đi ngủ thôi.", () => {
+            showNotification("Thư từ Bụt", "Con tính bỏ vé thật à?", 5000);
+        }],
+        ["s2.turnoff", "Tấm", "Mẹ không cho con đi rồi. Biết làm gì bây giờ."],
+        ["s2.turnoff", "Bụt", "Tấm ngày xưa vẫn đi được hội của nhà vua đấy thôi. Mẹ con có nhốt con ở trong nhà đâu đúng không?"],
+        ["s2.turnoff", "Tấm", "..."],
+        ["s2.turnoff", "Bụt", "Concert vẫn chưa bắt đầu. Còn tầm hai tiếng nữa. Vé VIP của con có cả quyền vào khu backstage, con đến đúng giờ là được."],
+        ["s2.turnoff", "Tấm", "Nhưng ông Bụt ơi, con không biết đường. Khu đó xa lắm, con lại chưa đến bao giờ, rồi còn không có xe nữa ạ."],
+        ["s2.turnoff", "Bụt", "Ta biết. Nên ta mới còn ở đây."],
+        ["s2.turnoff", "Tấm", "Vậy là con phải làm gì ạ?"],
+        ["s2.turnoff", "Bụt", "Chút nữa ta sẽ dưa cho con tấm bản đồ cũ của ta. Muốn đến đúng giờ, con phải đi đường tắt, mà đường tắt ở đó thì... phải nói là hơi phức tạp một chút."],
+        ["s2.turnoff", "Tấm", "\"Phức tạp một chút\" là sao ạ?"],
+        ["s2.turnoff", "Bụt", "Là hẻm chồng hẻm, ngõ thông ngõ, ngách sâu mười dấu gạch chéo. Người dân sống ở đó hai mươi năm còn lạc, con đừng lo."],
+        ["s2.turnoff", "System", "*Tấm hoàn toàn không \"đừng lo\" chút nào.*"],
+        ["s2.turnoff", "Bụt", "Con giải được mấy nghìn dòng dữ liệu nhiễu kia rồi còn gì. Mẫy cái ngõ nhỏ đó thì có đáng gì. Đi đi. Và nhớ tắt định vị trước khi ra khỏi nhà nhé."],
+        ["s2.turnoff", "Tấm", "Thưa ông, tắt định vị để làm gì ạ?", () => {
+            showNotification("Mất kết nối", "Ông Bụt đã rời khỏi đoạn chat.", 5000);
+        }],
+
+        ["s2.turnoff", "Tấm", "..."],
+        ["s2.challenge_header", "Tấm", "Thôi được rồi."],
+        ["s2.challenge", "System", "Bạn hãy giúp Tấm vượt qua thử thách này nhé!", null, "challenge_start"],
+    ],
+
+    "to_be_continued": [
+        ["tbc.blank", "System", "Hành trình của Tấm không dừng lại ở đây.", () => {
+            setCheckpoint("challenge2End");
+        }],
+        ["tbc.blank", "System", "Có lẽ Tấm cũng phần nào cảm thấy được điều đó. Và Tấm cũng còn rất nhiều câu hỏi chưa trả lời."],
+        ["tbc.blank", "System", "Tên người đang chờ ở Vấn Danh là gì?"],
+        ["tbc.blank", "System", "Dì ghẻ đang lẩm bẩm những gì?"],
+        ["tbc.blank", "System", "Vì sao Tấm lại phải tắt định vị?"],
+        ["tbc.text", "Bụt", "Hẹn gặp lại nhé, con."],
+        ["tbc.credits", "", ""]
     ]
 };
