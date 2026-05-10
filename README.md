@@ -1,36 +1,77 @@
-## Usage
+# Bụt của cô Tấm
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+![Logo](assets/images/logo-transparent-light.avif)
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+**Bụt của cô Tấm** là trò chơi Visual Novel chính thức cho **DSTC 2026**, phát triển bởi **CLB Khoa học Công nghệ trong Kinh tế và Kinh doanh (CTE)**.
+
+Dựa trên câu chuyện cổ tích Tấm Cám quen thuộc, nhưng được đặt trong bối cảnh hiện đại tại Hà Nội, trò chơi đưa bạn vào vai Tấm - một cô gái phải đối mặt với những thử thách công nghệ và cuộc sống "drama" thời đại số.
+
+## Công nghệ sử dụng
+
+### Frontend
+
+- **Framework:** [Solid.js](https://solidjs.com/) - Hiệu năng cao và phản hồi nhanh.
+- **Ngôn ngữ:** TypeScript.
+- **Styling:** Tailwind CSS & Plain CSS.
+- **Animation:** GSAP (GreenSock Animation Platform).
+- **Build Tool:** Vite.
+
+### Backend
+
+- **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python).
+- **Database:** SQLite (với `aiosqlite`).
+- **Auth:** JWT Authentication.
+
+## Cài đặt và Chạy thử
+
+### 1. Yêu cầu hệ thống
+
+- **Node.js** (khuyên dùng v20+) hoặc **Bun**.
+- **Python** 3.12+ (cho backend).
+
+### 2. Cài đặt Frontend
 
 ```bash
-$ npm install # or pnpm install or yarn install
+# Cài đặt dependencies
+npm install # hoặc bun install
+
+# Chạy ở chế độ phát triển
+npm run dev
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+Truy cập `http://localhost:5173` để chơi game.
 
-## Available Scripts
+### 3. Cài đặt Backend
 
-In the project directory, you can run:
+Di chuyển vào thư mục `backend`:
 
-### `npm run dev` or `npm start`
+```bash
+cd backend
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Cài đặt dependencies
+pip install -r requirements.txt # hoặc sử dụng pyproject.toml
 
-The page will reload if you make edits.<br>
+# Chạy server
+uvicorn main:app --host 0.0.0.0 --port 6942 --reload
+```
 
-### `npm run build`
+Server sẽ chạy tại `http://localhost:6942`.
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+## Cấu trúc thư mục
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+- `src/`: Toàn bộ mã nguồn frontend.
+    - `challenges/`: Các mini-game thử thách.
+    - `engine/`: Hệ thống xử lý kịch bản, âm thanh, cửa sổ.
+    - `storyline/`: Các chương truyện và màn hình chính.
+- `backend/`: Mã nguồn server và cơ sở dữ liệu.
+- `assets/`: Hình ảnh, font chữ và âm nhạc.
+- `static/`: Dữ liệu phục vụ cho các thử thách.
 
-## Deployment
+## Giấy phép
 
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+Dự án này được phát hành theo giấy phép **GNU Affero General Public License v3.0 (AGPL-3.0)**. Xem tệp [LICENSE](LICENSE) để biết thêm chi tiết.
 
-## This project was created with the [Solid CLI](https://github.com/solidjs-community/solid-cli)
+---
+
+**Phát triển bởi CTE FTU**
+[Facebook Fanpage](https://www.facebook.com/cteftu) | [Website](https://cteftu.com)

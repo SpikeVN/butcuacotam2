@@ -9,7 +9,8 @@ import ticketPassenger from "../../assets/images/ticket-passenger.avif";
 import "./styles/Section2.css";
 import { setCheckpoint, userdata } from "../engine/userdata";
 import { showNotification } from "../engine/notification";
-import { Match, Switch } from "solid-js";
+import { Match, onMount, Switch } from "solid-js";
+import Challenge2 from "../challenges/Challenge2";
 
 export default function Section2(props: { isExiting: boolean }) {
     return (
@@ -34,7 +35,7 @@ export default function Section2(props: { isExiting: boolean }) {
                 )}
             </AnimatedShow>
 
-            <AnimatedShow when={sceneIs(1, "challenge")}>
+            <AnimatedShow when={sceneIs(1, "challenge", "challenge_header")}>
                 {(exiting) => (
                     <>
                         <ChallengeTwo isExiting={exiting || props.isExiting} />
@@ -120,11 +121,14 @@ function TurnOff(props: { isExiting: boolean }) {
 function ChallengeTwo(props: { isExiting: boolean }) {
     return (
         <StandardWindow
-            initialWidth={850}
-            initialHeight={450}
+            initialWidth={900}
+            initialHeight={500}
             draggableMode="topbar"
             draggableHeight={30}
             title="Thử thách"
+            noPadding={true}
+            noTitlebarSpacing={true}
+            resizable={false}
         >
             <Switch>
                 <Match when={sceneIs(1, "challenge_header")}>
@@ -148,7 +152,9 @@ function ChallengeTwo(props: { isExiting: boolean }) {
                     </div>
                 </Match>
                 <Match when={sceneIs(1, "challenge")}>
-                    <div></div>
+                    <div class="w-full h-full overflow-hidden">
+                        <Challenge2 />
+                    </div>
                 </Match>
             </Switch>
         </StandardWindow>

@@ -514,9 +514,10 @@ function SuccessWindow(props: { isExiting: boolean }) {
         >
             <div class="w-full h-full flex flex-col items-center justify-center py-3">
                 <img
-                    class="absolute top-[24px]"
+                    class="absolute top-[24px] select-none"
                     src={camLuxuryLogo}
                     alt="Logo Cám Luxury"
+                    draggable="false"
                 />
 
                 <div class="flex flex-col gap-1.5">

@@ -48,6 +48,8 @@ interface StandardWindowProps {
     noPadding?: boolean;
     /** If true, removes the titlebar overlap/spacing. */
     noTitlebarSpacing?: boolean;
+    /** Whether the window is resizable. Defaults to true. */
+    resizable?: boolean;
     /** Callback to receive the StandardWindowAPI instance. */
     apiRef?: (api: StandardWindowAPI) => void;
     /** If true, the window is in its exit animation phase. */
@@ -180,6 +182,7 @@ const StandardWindow: Component<StandardWindowProps> = (props) => {
             alwaysOnTop={props.alwaysOnTop}
             baseZIndex={props.baseZIndex}
             allowOffScreen={props.allowOffScreen}
+            resizable={props.resizable}
             isExiting={props.isExiting}
         >
             <div class="standard-window-inner">

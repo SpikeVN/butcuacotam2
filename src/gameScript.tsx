@@ -86,18 +86,23 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
 
         ["s2.turnoff", "Tấm", "..."],
         ["s2.challenge_header", "Tấm", "Thôi được rồi."],
-        ["s2.challenge", "System", "Bạn hãy giúp Tấm vượt qua thử thách này nhé!", null, "challenge_start"],
+        ["s2.challenge", "", "", null, "challenge_start"],
+    ],
+
+    "game2_saves": [
+        ["s2.challenge.r1_complete", "", "", null, "challenge_r1_complete"],
+        ["s2.challenge.r2_complete", "", "", null, "challenge_r2_complete"],
     ],
 
     "to_be_continued": [
-        ["tbc.blank", "System", "Hành trình của Tấm không dừng lại ở đây.", () => {
+        ["tbc.blank", "System", "*Hành trình của Tấm không dừng lại ở đây.*", () => {
             setCheckpoint("challenge2End");
         }],
-        ["tbc.blank", "System", "Có lẽ Tấm cũng phần nào cảm thấy được điều đó. Và Tấm cũng còn rất nhiều câu hỏi chưa trả lời."],
-        ["tbc.blank", "System", "Tên người đang chờ ở Vấn Danh là gì?"],
-        ["tbc.blank", "System", "Dì ghẻ đang lẩm bẩm những gì?"],
-        ["tbc.blank", "System", "Vì sao Tấm lại phải tắt định vị?"],
+        ["tbc.blank", "System", "*Có lẽ Tấm cũng phần nào cảm thấy được điều đó. Và Tấm cũng còn rất nhiều câu hỏi chưa trả lời.*"],
+        ["tbc.blank", "System", "*Tên người đang chờ ở Vấn Danh là gì?*"],
+        ["tbc.blank", "System", "*Dì ghẻ đang lẩm bẩm những gì?*"],
+        ["tbc.blank", "System", "*Vì sao Tấm lại phải tắt định vị?*"],
         ["tbc.text", "Bụt", "Hẹn gặp lại nhé, con."],
-        ["tbc.credits", "", ""]
+        ["credits", "", ""]
     ]
 };

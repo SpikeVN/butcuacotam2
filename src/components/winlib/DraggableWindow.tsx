@@ -92,6 +92,8 @@ interface DraggableWindowProps {
     minWidth?: number;
     /** Minimum height of the window in pixels. Defaults to 100. */
     minHeight?: number;
+    /** Whether the window is resizable. Defaults to true. */
+    resizable?: boolean;
     /** Callback to receive the DraggableWindowAPI instance. */
     apiRef?: (api: DraggableWindowAPI) => void;
     /** If true, the window is in its exit animation phase. */
@@ -521,38 +523,42 @@ const DraggableWindow: Component<DraggableWindowProps> = (props) => {
             {props.children}
 
             {/* Resize Handles */}
-            <div
-                class="resize-handle n"
-                onMouseDown={(e) => handleResizeMouseDown(e, "n")}
-            />
-            <div
-                class="resize-handle s"
-                onMouseDown={(e) => handleResizeMouseDown(e, "s")}
-            />
-            <div
-                class="resize-handle e"
-                onMouseDown={(e) => handleResizeMouseDown(e, "e")}
-            />
-            <div
-                class="resize-handle w"
-                onMouseDown={(e) => handleResizeMouseDown(e, "w")}
-            />
-            <div
-                class="resize-handle nw"
-                onMouseDown={(e) => handleResizeMouseDown(e, "nw")}
-            />
-            <div
-                class="resize-handle ne"
-                onMouseDown={(e) => handleResizeMouseDown(e, "ne")}
-            />
-            <div
-                class="resize-handle sw"
-                onMouseDown={(e) => handleResizeMouseDown(e, "sw")}
-            />
-            <div
-                class="resize-handle se"
-                onMouseDown={(e) => handleResizeMouseDown(e, "se")}
-            />
+            {(props.resizable ?? true) && (
+                <>
+                    <div
+                        class="resize-handle n"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "n")}
+                    />
+                    <div
+                        class="resize-handle s"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "s")}
+                    />
+                    <div
+                        class="resize-handle e"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "e")}
+                    />
+                    <div
+                        class="resize-handle w"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "w")}
+                    />
+                    <div
+                        class="resize-handle nw"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "nw")}
+                    />
+                    <div
+                        class="resize-handle ne"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "ne")}
+                    />
+                    <div
+                        class="resize-handle sw"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "sw")}
+                    />
+                    <div
+                        class="resize-handle se"
+                        onMouseDown={(e) => handleResizeMouseDown(e, "se")}
+                    />
+                </>
+            )}
         </div>
     );
 };

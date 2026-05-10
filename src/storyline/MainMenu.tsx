@@ -97,7 +97,7 @@ export default function MainMenu(props: {
                 <p class="absolute text-fg2 text-sm bottom-3 max-w-3/5 text-center">
                     Bụt của cô Tấm 0.0.1-ALPHA. Bản quyền © 2026 CLB
                     Khoa&nbsphọc Công&nbspnghệ trong Kinh&nbsptế và
-                    Kinh&nbspdoanh. Phát hành theo giấy phép GPLv3.
+                    Kinh&nbspdoanh. <a href="https://github.com/SpikeVN/butcuacotam2/" target="_blank">Phát hành theo giấy phép GPLv3.</a>
                 </p>
             </div>
 

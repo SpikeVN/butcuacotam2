@@ -5,6 +5,8 @@ import AuthenticationGuard from "./AuthenticationGuard";
 import { AnimatedShow } from "../components/winlib/AnimatedShow";
 import "./styles/Game.css";
 import Section2 from "./Section2";
+import ToBeContinued from "./ToBeContinued";
+import Credits from "./Credits";
 
 export default function Game() {
     return (
@@ -27,6 +29,28 @@ export default function Game() {
                         classList={{ exiting: exiting }}
                     >
                         <Section2 isExiting={exiting} />
+                    </div>
+                )}
+            </AnimatedShow>
+
+            <AnimatedShow when={sceneIs(0, "tbc")}>
+                {(exiting) => (
+                    <div
+                        class="section-fade-container"
+                        classList={{ exiting: exiting }}
+                    >
+                        <ToBeContinued />
+                    </div>
+                )}
+            </AnimatedShow>
+
+            <AnimatedShow when={sceneIs(0, "credits")}>
+                {(exiting) => (
+                    <div
+                        class="section-fade-container"
+                        classList={{ exiting: exiting }}
+                    >
+                        <Credits />
                     </div>
                 )}
             </AnimatedShow>

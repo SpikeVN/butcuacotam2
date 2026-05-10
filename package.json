@@ -25,6 +25,7 @@
     "blakejs": "^1.2.1",
     "gsap": "^3.14.2",
     "qr-code-styling": "^1.9.2",
-    "solid-js": "^1.9.9"
+    "solid-js": "^1.9.9",
+    "phaser": "^4.0.0"
   }
 }

@@ -1,0 +1,134 @@
+.credits-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 1000;
+    background: var(--color-bg);
+    cursor: ns-resize;
+}
+
+.credits-back-button {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1010;
+    background: none;
+    border: 1px solid var(--color-fg2);
+    border-radius: 8px;
+    color: var(--color-fg2);
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        color 0.2s,
+        border-color 0.2s,
+        background 0.2s;
+}
+
+.credits-back-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.credits-back-button:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(180, 163, 253, 0.1);
+}
+
+.credits-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    width: 100%;
+    /* max-width: 700px; */
+    will-change: transform;
+}
+
+.credits-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 40vh;
+}
+
+.credits-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.4rem 0;
+    width: 100%;
+}
+
+.credits-role {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.credits-name {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-align: center;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.credits-link {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-style: normal;
+    color: var(--color-fg);
+    text-decoration: none;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--color-fg);
+    border-radius: 4px;
+    transition:
+        color 0.2s,
+        border-color 0.2s,
+        background 0.2s;
+}
+
+.credits-link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(180, 163, 253, 0.1);
+}
+
+.credits-spacer {
+    height: 1.5rem;
+}
+
+.credits-speed-indicator {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--color-fg2);
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}

@@ -22,6 +22,7 @@ import { GameStage } from "./types";
 import LoadingScreen from "./storyline/LoadingScreen";
 import MainMenu from "./storyline/MainMenu";
 import Game from "./storyline/Game";
+import DevTools from "./components/DevTools";
 import { registerEvent } from "./engine/events";
 import NotificationSystem from "./components/winlib/NotificationSystem";
 import {
@@ -31,12 +32,13 @@ import {
     setDataLoaded,
     dataLoaded,
 } from "./engine/userdata";
+import Credits from "./storyline/Credits";
 
 const App: Component = () => {
     let [stage, setStage] = createSignal(GameStage.LOADING_SCREEN);
 
     if (import.meta.env.DEV) {
-        setStage(GameStage.PLAY);
+        setStage(GameStage.LOADING_SCREEN);
     }
 
     registerEvent("changescreen_loading", () =>
@@ -67,29 +69,37 @@ const App: Component = () => {
     });
 
     return (
-        <Show when={dataLoaded()}>
-            <NotificationSystem />
-            <Switch>
-                <Match when={stage() == GameStage.LOADING_SCREEN}>
-                    <LoadingScreen
-                        doneCallback={() => {
-                            console.log("calling the next stage");
-                            setStage(GameStage.MAIN_MENU);
-                        }}
-                    />
-                </Match>
-                <Match when={stage() == GameStage.MAIN_MENU}>
-                    <MainMenu
-                        doneCallback={(nextStage) => {
-                            setStage(nextStage);
-                        }}
-                    />
-                </Match>
-                <Match when={stage() == GameStage.PLAY}>
-                    <Game />
-                </Match>
-            </Switch>
-        </Show>
+        <>
+            <Show when={import.meta.env.DEV}>
+                <DevTools currentStage={stage()} />
+            </Show>
+            <Show when={dataLoaded()}>
+                <NotificationSystem />
+                <Switch>
+                    <Match when={stage() == GameStage.LOADING_SCREEN}>
+                        <LoadingScreen
+                            doneCallback={() => {
+                                console.log("calling the next stage");
+                                setStage(GameStage.MAIN_MENU);
+                            }}
+                        />
+                    </Match>
+                    <Match when={stage() == GameStage.MAIN_MENU}>
+                        <MainMenu
+                            doneCallback={(nextStage) => {
+                                setStage(nextStage);
+                            }}
+                        />
+                    </Match>
+                    <Match when={stage() == GameStage.PLAY}>
+                        <Game />
+                    </Match>
+                    <Match when={stage() == GameStage.CREDITS}>
+                        <Credits />
+                    </Match>
+                </Switch>
+            </Show>
+        </>
     );
 };
 
