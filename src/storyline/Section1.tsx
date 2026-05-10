@@ -1,10 +1,4 @@
-import {
-    createSignal,
-    onCleanup,
-    Show,
-    For,
-    onMount,
-} from "solid-js";
+import { createSignal, onCleanup, Show, For, onMount } from "solid-js";
 import { sceneIs } from "../engine/script";
 import VisualNovelTextWindow from "../components/VisualNovelTextWindow";
 import FullScreenNarrator from "../components/FullScreenNarrator";
@@ -33,7 +27,8 @@ export default function Section1() {
             </AnimatedShow>
             <AnimatedShow
                 when={
-                    sceneIs(1, "leadin", "challenge_shock") || showChallenge() && !sceneIs(1, "challenge")
+                    sceneIs(1, "leadin", "challenge_shock") ||
+                    (showChallenge() && !sceneIs(1, "challenge"))
                 }
             >
                 {(exiting) => (
@@ -99,9 +94,7 @@ function TicketWindow(props: { isExiting?: boolean }) {
 
                 <div class="border border-fg2 bg-bg p-4.5 flex flex-col gap-2 relative overflow-hidden">
                     <div class="relative z-10 flex flex-col gap-1">
-                        <h3 class="font-bold text-fg text-[16px]">
-                            Anh Tôi
-                        </h3>
+                        <h3 class="font-bold text-fg text-[16px]">Vấn Danh</h3>
                         <div class="flex items-center gap-2 text-fg/80 text-[14px]">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -186,15 +179,14 @@ function CapCut(props: { isExiting?: boolean }) {
             noPadding={true}
             noTitlebarSpacing={true}
             draggableMode="anywhere"
+            initialWidth={700}
+            initialHeight={370}
             initialY={window.innerHeight / 6}
             initialX={window.innerWidth / 2.5}
             isExiting={props.isExiting}
         >
             <img
-                style={{
-                    width: "700px",
-                    height: "370px",
-                }}
+                class="w-full h-full"
                 src={capcutApp}
                 draggable={false}
                 alt="CapCut application window"

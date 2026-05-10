@@ -1,0 +1,17 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-jose[cryptography]",
+    "python-multipart",
+    "sqlalchemy[asyncio]",
+    "aiosqlite",
+    "pydantic",
+    "pydantic-settings",
+    "sqlite-web",
+]

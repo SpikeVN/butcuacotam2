@@ -46,9 +46,10 @@ export default function AuthTicket(props: {
     return (
         <div class="relative">
             <img
-                class="w-[600px] h-auto"
+                class="w-[600px] h-auto select-none"
                 src={authTicket}
                 alt="ticket background"
+                draggable="false"
             />
             <p class="text-name glow">{props.name}</p>
             <p class="text-spell glow">{props.spell}</p>

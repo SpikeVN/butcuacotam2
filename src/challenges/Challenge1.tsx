@@ -1,10 +1,28 @@
-import { createSignal, For, Match, Setter, Signal, Switch } from "solid-js";
+import {
+    createSignal,
+    For,
+    Match,
+    onMount,
+    Setter,
+    Signal,
+    Switch,
+} from "solid-js";
 import StandardWindow from "../components/winlib/StandardWindow";
 
 import "./Challenge1.css";
 import { showNotification } from "../engine/notification";
+import {
+    setCheckpoint,
+    submitChallenge,
+    uploadSolution,
+} from "../engine/userdata";
+import { IconArrowRight } from "../storyline/AuthenticationGuard";
 
 export default function Challenge1(props: { isExiting?: boolean }) {
+    onMount(() => {
+        setCheckpoint("challengeOneStart");
+    });
+
     return (
         <StandardWindow
             title="Thử thách"
@@ -140,7 +158,22 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                     />
                 </svg>
 
-                <div class="w-full max-w-full px-12 py-8 prose prose-invert">
+                <form
+                    class="w-full max-w-full px-12 py-8 prose prose-invert"
+                    onsubmit={async (ev) => {
+                        ev.preventDefault();
+
+                        submitChallenge(
+                            "one",
+                            Object.fromEntries(
+                                // @ts-ignore
+                                new FormData(ev.target).entries(),
+                            ),
+                        );
+
+                        setCheckpoint("challengeOneComplete");
+                    }}
+                >
                     <p class="font-bold">
                         Tính cả cả comment thật lẫn spam/không hợp lệ, tổng cộng
                         có bao nhiêu comment?
@@ -153,12 +186,17 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                     <p class="font-bold">
                         Có bao nhiêu comment là không hợp lệ?
                     </p>
-                    <RadioQuestion
+                    <input
+                        type="number"
                         name="question2"
-                        options={["120", "149", "150", "200"]}
+                        class="shadow px-6 py-3 mt-[-0.8rem] w-md"
+                        placeholder="Nhập đáp án số"
                     />
 
-                    <p class="font-bold">Tỉ lệ comment spam dưới 50%.</p>
+                    <p class="font-bold">
+                        Tỉ lệ comment spam (là từ một người comment nhiều lần
+                        hoặc có văng tục, không phải thiếu dữ liệu) dưới 50%.
+                    </p>
                     <TrueOrFalse name="question3" />
 
                     <p class="font-bold">
@@ -168,22 +206,22 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                     <input
                         type="number"
                         name="question4"
-                        class="shadow px-6 py-3 mt-[-0.8rem]"
+                        class="shadow px-6 py-3 mt-[-0.8rem] w-md"
                         placeholder="Nhập đáp án số"
                     />
 
                     <p class="font-bold">
-                        Sau khi loại bỏ hết comment không hợp lệ đi, rating
-                        trung bình của shop là bao nhiêu?
+                        Có phải những comment spam thường đưa ra đánh giá cao
+                        hơn không? Vì sao bạn cho rằng như vậy?
                     </p>
                     <input
-                        type="number"
+                        type="text"
                         name="question5"
-                        class="shadow px-6 py-3 mt-[-0.8rem]"
-                        placeholder="Nhập đáp án số"
+                        class="shadow px-6 py-3 mt-[-0.8rem] w-md"
+                        placeholder="Nhập câu trả lời"
                     />
 
-                    <p class="italic">
+                    <p class="italic font-sans">
                         Những câu hỏi sau đây là tùy chọn, bạn có thể không trả
                         lời.
                     </p>
@@ -203,7 +241,13 @@ export default function Challenge1(props: { isExiting?: boolean }) {
                     </p>
 
                     <UploadBeg />
-                </div>
+
+                    <p>Khi bạn đã chắc chắn với đáp án của mình, bấm Gửi.</p>
+
+                    <button type="submit" value="Gửi" class="btn">
+                        Gửi <IconArrowRight />
+                    </button>
+                </form>
             </div>
         </StandardWindow>
     );
@@ -224,6 +268,7 @@ function RadioQuestion(props: {
                             class="mcq-input"
                             name={props.name}
                             id={`${props.name}-${children}`}
+                            value={children}
                         />
                         <label for={`${props.name}-${children}`}>
                             {children}
@@ -252,6 +297,7 @@ function TrueOrFalse(props: { name: string; onSubmit?: () => void }) {
                 class="mcq-input"
                 name={props.name}
                 id={`${props.name}-true`}
+                value="true"
                 onChange={() => handleChange("true")}
             />
             <label
@@ -287,6 +333,7 @@ function TrueOrFalse(props: { name: string; onSubmit?: () => void }) {
                 class="mcq-input"
                 name={props.name}
                 id={`${props.name}-false`}
+                value="false"
                 onChange={() => handleChange("false")}
             />
             <label
@@ -341,11 +388,12 @@ function UploadBeg() {
                             3000,
                         );
                         return;
+                    } else {
+                        console.log(filinput);
+                        // @ts-ignore
+                        setFileUpload([true, filinput.files[0]]);
+                        uploadSolution(filinput.files![0]);
                     }
-
-                    console.log(filinput);
-                    // @ts-ignore
-                    setFileUpload([true, filinput.files[0]]);
                 }}
             />
             <Switch

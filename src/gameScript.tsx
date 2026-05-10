@@ -36,7 +36,7 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
 /* 20*/ ["s1.challenge_shock", "Dì ghẻ", "Nào Cám! Đi với mẹ chuẩn bị đồ. Tối nay hai mẹ con mình đi concert, nghe đồn có nhiều anh được lắm!"],
 /* 21*/ ["s1.challenge_shock", "Cám", "Biết rồi mẹ, con đang chọn outfit chụp ảnh đây."],
 /* 21*/ ["s1.challenge_shock", "System", "*Mụ đóng sập cửa. Tấm ngồi một mình giữa đống việc chồng chất.*"],
-/* 22*/ ["s1.challenge", "Tấm", "Ông Bụt ơi! Nếu ông có linh thiêng, xin hãy giúp con với!"],
+/* 22*/ ["s1.challenge", "Tấm", "Ông Bụt ơi! Nếu ông có linh ứng, xin hãy giúp con với!"],
     ],
 
     "game_1_success": [

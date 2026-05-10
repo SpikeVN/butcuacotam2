@@ -23,6 +23,11 @@ body {
     --font-display: "Bricolage Grotesque";
     --font-serif: "Cormorant Garamond";
 
+    --font-sans:
+        "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+        "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
     --color-bg: #100721;
     --color-fg: #c6b9dc;
     --color-fg2: #4c376f;
@@ -30,8 +35,8 @@ body {
 
     --color-accent: #b4a3fd;
     --font-mono:
-        ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Mono", "JetBrainsMono Nerd Font",
-        "JetBrains Mono", Consolas, monospace;
+        ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Mono",
+        "JetBrainsMono Nerd Font", "JetBrains Mono", Consolas, monospace;
 }
 
 /* Global scrollbar styling */

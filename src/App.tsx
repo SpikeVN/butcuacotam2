@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createSignal, Match, Switch, type Component } from "solid-js";
+import { createSignal, Match, Show, Switch, type Component } from "solid-js";
 import { GameStage } from "./types";
 
 import LoadingScreen from "./storyline/LoadingScreen";
@@ -24,7 +24,13 @@ import MainMenu from "./storyline/MainMenu";
 import Game from "./storyline/Game";
 import { registerEvent } from "./engine/events";
 import NotificationSystem from "./components/winlib/NotificationSystem";
-import { loadUserdata, handleSpellFromUrl, saveUserdata } from "./engine/userdata";
+import {
+    loadUserdata,
+    handleSpellFromUrl,
+    saveUserdata,
+    setDataLoaded,
+    dataLoaded,
+} from "./engine/userdata";
 
 const App: Component = () => {
     let [stage, setStage] = createSignal(GameStage.LOADING_SCREEN);
@@ -44,7 +50,14 @@ const App: Component = () => {
     registerEvent("changescreen_settings", () => setStage(GameStage.SETTINGS));
     registerEvent("changescreen_credits", () => setStage(GameStage.CREDITS));
 
-    loadUserdata();
+    loadUserdata().then((_) => {
+        setDataLoaded(true);
+    });
+
+    setInterval(async () => {
+        await saveUserdata();
+    }, 60 * 1000);
+
     handleSpellFromUrl();
 
     document.addEventListener("visibilitychange", async () => {
@@ -54,7 +67,7 @@ const App: Component = () => {
     });
 
     return (
-        <>
+        <Show when={dataLoaded()}>
             <NotificationSystem />
             <Switch>
                 <Match when={stage() == GameStage.LOADING_SCREEN}>
@@ -76,7 +89,7 @@ const App: Component = () => {
                     <Game />
                 </Match>
             </Switch>
-        </>
+        </Show>
     );
 };
 

@@ -1,0 +1,37 @@
+FROM python:3.12-alpine AS builder
+
+WORKDIR /opt/butbase
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    libffi-dev \
+    openssl-dev
+
+# Install dependencies
+COPY pyproject.toml .
+RUN pip install --no-cache-dir .
+
+FROM python:3.12-alpine
+
+WORKDIR /opt/butbase
+
+# Install runtime dependencies
+RUN apk add --no-cache libffi openssl
+
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+COPY . .
+
+# Ensure directories exist
+RUN mkdir -p db_data logs
+
+ENV PYTHONUNBUFFERED=1
+ENV DB_PATH=/opt/butbase/db_data/database.sqlite
+ENV LOG_DIR=/opt/butbase/logs
+
+EXPOSE 6942
+
+CMD ["python", "main.py"]

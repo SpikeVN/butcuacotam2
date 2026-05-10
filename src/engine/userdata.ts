@@ -5,7 +5,9 @@ import { fromb64 } from "./crypto";
 
 const ENDPOINT = (import.meta.env.VITE_API_ENDPOINT ? import.meta.env.VITE_API_ENDPOINT : "http://localhost:6942").replace(/\/$/, "");
 
+// @ts-ignore
 export let [authenticated, setAuthenticated] = createSignal(false);
+export let [dataLoaded, setDataLoaded] = createSignal(false);
 
 // @ts-ignore
 export let [userdata, setUserdata]: Signal<UserData> = createSignal({});
@@ -58,12 +60,59 @@ export const loadUserdata = async () => {
         } else {
             setAuthenticated(false);
         }
+        setDataLoaded(true);
     } catch (err) {
         console.debug(
             "Network error or request cancelled during session validation",
         );
         setAuthenticated(false);
+        setDataLoaded(true);
     }
+
+    return authenticated()
+};
+
+export const submitChallenge = async (challengeId: string, answer: any) => {
+    const res = await fetch(ENDPOINT + `/challengeSubmit/${challengeId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(answer),
+    });
+
+    if (res.ok) {
+        return await res.json();
+    }
+    return null;
+};
+
+export const uploadSolution = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(ENDPOINT + "/uploadSolution", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+    });
+
+    if (res.ok) {
+        return await res.json();
+    }
+    return null;
+};
+
+export const setCheckpoint = async (name: string) => {
+    const res = await fetch(ENDPOINT + `/checkpoint/${name}`, {
+        method: "POST",
+        credentials: "include",
+    });
+    if (res.ok) {
+        return await res.json();
+    }
+    return null;
 };
 
 export const login = async (spell: string) => {
@@ -73,7 +122,7 @@ export const login = async (spell: string) => {
             "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ spell_hash: spell }),
+        body: JSON.stringify({ spell: spell }),
     });
 
     if (res.ok) {
@@ -87,7 +136,7 @@ export const login = async (spell: string) => {
     return false;
 };
 
-export const register = async (name: string, email: string, spell_hash: string) => {
+export const register = async (name: string, email: string, spell: string) => {
     const res = await fetch(
         ENDPOINT + "/auth/register",
         {
@@ -99,15 +148,14 @@ export const register = async (name: string, email: string, spell_hash: string) 
             body: JSON.stringify({
                 name,
                 email,
-                spell_hash,
+                spell,
             }),
         },
     );
 
     if (res.ok) {
-        setAuthenticated(true);
         await loadUserdata();
-        return true;
+        return authenticated();
     }
     return false;
 };

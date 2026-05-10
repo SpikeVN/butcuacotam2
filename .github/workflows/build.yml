@@ -6,7 +6,7 @@ on:
     branches: ["main"]
 
 jobs:
-  deploy:
+  deploy_frontend:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,3 +38,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=butcuacotam
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          

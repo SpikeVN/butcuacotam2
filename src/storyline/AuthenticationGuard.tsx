@@ -1,4 +1,4 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, onMount, Show } from "solid-js";
 import { authenticated, login, register, userdata } from "../engine/userdata";
 
 import "./styles/AuthenticationGuard.css";
@@ -9,25 +9,17 @@ import { AnimatedShow } from "../components/winlib/AnimatedShow";
 
 let [branch, setBranch] = createSignal("none");
 let [spellntoken, setspellntoken] = createSignal(["", ""]);
-
-let [doneSetup, setDoneSetup] = createSignal(authenticated());
+let [doneSetup, setDoneSetup] = createSignal(false);
 
 export default function AuthenticationGuard(props: { children: any }) {
     const showAuth = () => !(authenticated() && doneSetup());
 
+    onMount(() => {
+        setDoneSetup(authenticated())
+    });
+
     return (
         <>
-            <AnimatedShow when={showAuth()} duration={400}>
-                {(isExiting) => (
-                    <div
-                        class="fixed inset-0 z-[90] bg-bg"
-                        classList={{ "auth-fade-out": isExiting }}
-                    >
-                        <div class="noise-blur-bg" aria-hidden="true" />
-                    </div>
-                )}
-            </AnimatedShow>
-
             <AnimatedShow
                 when={branch() === "none" && !authenticated()}
                 duration={400}
@@ -68,9 +60,7 @@ export default function AuthenticationGuard(props: { children: any }) {
                                         "spell",
                                     ) as string;
                                     if (spell) {
-                                        const success = await login(
-                                            computeHash(spell),
-                                        );
+                                        const success = await login(spell);
                                         if (!success) {
                                             showNotification(
                                                 "Lỗi",
@@ -119,12 +109,7 @@ export default function AuthenticationGuard(props: { children: any }) {
                                     <p>
                                         Để bắt đầu, chúng mình cần một số thông
                                         tin của bạn. <br /> Chúng mình sẽ liên
-                                        lạc với bạn bằng những thông tin này.{" "}
-                                        <br /> Chính sách bảo mật thông tin cá
-                                        nhân của CTE{" "}
-                                        <a href="#" class="privacy-link">
-                                            ở đây
-                                        </a>
+                                        lạc với bạn bằng những thông tin này.
                                     </p>
                                 </div>
                             </div>
@@ -193,11 +178,12 @@ function RegisterForm(props: RegisterFormProps) {
             return;
         }
 
-        const success = await register(name, email, spell.hash);
-        setBranch("showing_ticket");
-        setspellntoken([spell.spell, spell.token]);
+        const success = await register(name, email, spell.spell);
 
-        if (!success) {
+        if (success) {
+            setspellntoken([spell.spell, spell.token]);
+            setBranch("showing_ticket");
+        } else {
             showNotification(
                 "Lỗi",
                 "Đăng ký thất bại. Vui lòng thử lại hoặc liên hệ với chúng mình.",
@@ -311,7 +297,7 @@ function ShowingTicket() {
     );
 }
 
-const IconArrowRight = () => (
+export const IconArrowRight = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18"
