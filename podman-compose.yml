@@ -19,34 +19,43 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
-      - ./backend/db_data:/data
+      - ./backend/db_data:/data:Z
     environment:
       - SQLITE_DATABASE=database.sqlite
-    command: -p 8080 -H 0.0.0.0 /data/database.sqlite
-
-  umami-db:
-    image: docker.io/library/postgres:15-alpine
-    container_name: butbase-umami-db
-    restart: always
-    environment:
-      - POSTGRES_DB=umami
-      - POSTGRES_USER=umami
-      - POSTGRES_PASSWORD=umami_password
-    volumes:
-      - umami-db-data:/var/lib/postgresql/data
+    command: sqlite_web -p 8080 -H 0.0.0.0 /data/database.sqlite
 
   umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    container_name: butbase-umami
-    restart: always
+    image: ghcr.io/umami-software/umami:latest
     ports:
       - "127.0.0.1:3000:3000"
     environment:
-      - DATABASE_URL=postgresql://umami:umami_password@umami-db:5432/umami
-      - APP_SECRET=!!!REPLACEME!!!
-      - BASE_PATH=/analytics
+      DATABASE_URL: postgresql://umami:umami@umami-db:5432/umami
+      APP_SECRET: replace-me-with-a-random-string
     depends_on:
-      - umami-db
+      umami-db:
+        condition: service_healthy
+    init: true
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:3000/api/heartbeat"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  umami-db:
+    image: docker.io/postgres:15-alpine
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: umami
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   umami-db-data:
