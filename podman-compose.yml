@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ghcr.io/SpikeVN/butbase:latest
+    image: ghcr.io/spikevn/butbase:latest
     container_name: butbase-backend
     restart: always
     ports:
@@ -13,7 +13,7 @@ services:
       - DEBUG=False
 
   sqlite-web:
-    image: coleifer/sqlite-web
+    image: docker.io/coleifer/sqlite-web
     container_name: butbase-sqlite-web
     restart: always
     ports:
@@ -25,7 +25,7 @@ services:
     command: -p 8080 -H 0.0.0.0 /data/database.sqlite
 
   umami-db:
-    image: postgres:15-alpine
+    image: docker.io/library/postgres:15-alpine
     container_name: butbase-umami-db
     restart: always
     environment:

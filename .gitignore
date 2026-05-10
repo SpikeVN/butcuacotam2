@@ -33,3 +33,4 @@ spellbook.json
 mongodb/
 .vscode/
 backend-OLD/
+.venv/
