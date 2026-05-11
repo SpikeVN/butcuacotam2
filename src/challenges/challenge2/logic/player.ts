@@ -168,6 +168,17 @@ export class PlayerController {
 
 		// DOM fallback for Space — browser often eats it before Phaser sees it
 		const domHandler = (e: KeyboardEvent) => {
+			// Ignore if typing in an input or if VN window is active
+			const isInput = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement ||
+				document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement;
+
+			const vnWindow = document.querySelector('.visualnovel-window') as HTMLElement | null;
+			const isVNActive = vnWindow && vnWindow.offsetParent !== null;
+
+			if (isInput || isVNActive) {
+				return;
+			}
+
 			if (e.code === 'Space' && !this._isJumping && this.jumpCooldown <= 0 && !this.isFalling && !this.isFailed) {
 				e.preventDefault();
 				this.startJump();
@@ -175,6 +186,8 @@ export class PlayerController {
 		};
 		window.addEventListener('keydown', domHandler);
 		this.domSpaceHandler = () => window.removeEventListener('keydown', domHandler);
+
+		scene.events.once('shutdown', () => this.destroy());
 	}
 
 	update(delta: number): void {

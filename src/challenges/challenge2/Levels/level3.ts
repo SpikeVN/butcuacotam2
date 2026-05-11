@@ -243,7 +243,11 @@ export default class Level3 extends Phaser.Scene {
 		this.fog?.destroy();
 		this.fog = undefined;
 		this.winOverlay = showWinMenu(this, {
-			onContinue: () => this.scene.start('selection')
+			onContinue: () => {
+				switchPath("to_be_continued", 0);
+				saveUserdata();
+				this.scene.start('selection');
+			}
 		});
 
 		setCheckpoint("challenge2WinR3");

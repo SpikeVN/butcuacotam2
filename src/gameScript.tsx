@@ -19,7 +19,7 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
 /* 5 */ ["s1.leadin", "Cám", "Tấm! Phần mới trong cái clip Morning Routine em quay hôm qua chị edit xong chưa? Phần cũ em đăng từ tối qua mà giờ này mới có 7 tim :((", () => {
             showNotification("Gợi ý", "Bạn có thể kéo thả các cửa sổ bằng cách nhấn giữ phần gần đỉnh và kéo cửa sổ. Một số có thể kéo thả ở bất kỳ vị trí nào.", 5000);
             setTimeout(() => {
-                showNotification("Gợi ý", "Game tự động lưu tiến trình. Bấm vào menu BụtOS ở góc dưới bên trái màn hình để xem các tùy chọn.", 5000);
+                showNotification("Gợi ý", "Game tự động lưu tiến trình. Bấm phím cách hoặc bấm vào cửa sổ visual novel ở bên dưới để xem tiếp lời thoại.", 5000);
             }, 5000)
         }],
 /* 6 */ ["s1.leadin", "Cám", "LÀ BẢY TIM ĐÓOOO!!! Mà filter kiểu gì mà da mặt em vẫn đen thế này!?"],

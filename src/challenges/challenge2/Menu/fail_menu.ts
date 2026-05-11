@@ -26,6 +26,17 @@ export function showFailMenu(scene: Phaser.Scene, options: ShowFailMenuOptions):
 	const container = scene.add.container(0, 0, [overlay, title, hint]);
 
 	const handleKeyDown = (event: KeyboardEvent) => {
+		// Ignore if typing in an input
+		const isInput = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement ||
+			document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement;
+
+		const vnWindow = document.querySelector('.visualnovel-window') as HTMLElement | null;
+		const isVNActive = vnWindow && vnWindow.offsetParent !== null;
+
+		if (isInput || isVNActive) {
+			return;
+		}
+
 		// Ignore modifier keys
 		if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'NumLock'].includes(event.key)) {
 			return;

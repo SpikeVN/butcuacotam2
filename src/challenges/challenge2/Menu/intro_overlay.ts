@@ -180,6 +180,17 @@ export function showIntroOverlay(
 
     // DOM fallback — only prevent default for Space (to stop scrolling)
     const domKeyHandler = (e: KeyboardEvent) => {
+        // Ignore if typing in an input or if VN window is active
+        const isInput = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement ||
+            document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement;
+
+        const vnWindow = document.querySelector('.visualnovel-window') as HTMLElement | null;
+        const isVNActive = vnWindow && vnWindow.offsetParent !== null;
+
+        if (isInput || isVNActive) {
+            return;
+        }
+
         if (e.code === 'Space') {
             e.preventDefault();
         }
@@ -187,6 +198,10 @@ export function showIntroOverlay(
         keyHandler();
     };
     window.addEventListener('keydown', domKeyHandler);
+
+    scene.events.once('shutdown', () => {
+        window.removeEventListener('keydown', domKeyHandler);
+    });
 
     // Also allow click/tap to start
     bg.once('pointerdown', () => {

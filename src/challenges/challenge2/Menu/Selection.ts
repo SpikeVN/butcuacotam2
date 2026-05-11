@@ -154,6 +154,8 @@ export default class Selection extends Phaser.Scene {
 			skipBtn.on('pointerdown', () => {
 				showWinMenu(this, {
 					onContinue: () => {
+						switchPath("to_be_continued", 0);
+						saveUserdata();
 						this.scene.restart();
 					}
 				});

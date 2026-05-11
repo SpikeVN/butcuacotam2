@@ -58,8 +58,6 @@ export function showWinMenu(scene: Phaser.Scene, options: ShowWinMenuOptions): P
 	hitArea.on('pointerdown', () => {
 		scene.events.off('shutdown', cleanup);
 		options.onContinue();
-		switchPath("to_be_continued", 0);
-		saveUserdata()
 	});
 
 	const container = scene.add.container(0, 0, [overlay, title, btnBg, btnText, hitArea]);

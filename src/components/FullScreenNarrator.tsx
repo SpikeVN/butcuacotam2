@@ -166,6 +166,15 @@ const FullScreenNarrator: Component = () => {
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+        // Ignore if typing in an input
+        const isInput =
+            e.target instanceof HTMLInputElement ||
+            e.target instanceof HTMLTextAreaElement ||
+            document.activeElement instanceof HTMLInputElement ||
+            document.activeElement instanceof HTMLTextAreaElement;
+
+        if (isInput) return;
+
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             handleAdvance();
