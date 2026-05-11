@@ -125,7 +125,7 @@ const CREDITS_DATA: CreditsEntry[] = [
     { role: "", name: "" },
     {
         role: "Xin chân thành cảm ơn",
-        name: [["NTQ Solutions, JSC", "ntq.com.vn", "https://ntq.com.vn/"]],
+        name: [["NTQ Solution JSC", "ntq.com.vn", "https://ntq.com.vn/"]],
     },
     { role: "", name: "" },
     { role: "", name: "" },

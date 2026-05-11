@@ -13,11 +13,14 @@ gsap.registerPlugin(TextPlugin, ScrambleTextPlugin, SplitText);
 
 const LOGO_ANIMATION_DURATION_SECS = 0.8;
 
-export default function LoadingScreen(props: { doneCallback: () => void }) {
+export default function LoadingScreen(props: {
+    doneCallback: () => void;
+    skipLogos?: boolean;
+}) {
     const [showingLogo, setShowingLogo] = createSignal(-1);
 
     const nextLogo = () => {
-        if (showingLogo() == 3) {
+        if (props.skipLogos || showingLogo() == 3) {
             props.doneCallback();
             return;
         }
@@ -378,7 +381,7 @@ function LogoNTQ(props: { doneCallback: () => void }) {
                         in collaboration with
                     </p>
                     <p class="leading-5 text-xl font-semibold">
-                        NTQ Solutions, JSC
+                        NTQ Solution JSC
                     </p>
                 </div>
                 <img

@@ -35,6 +35,7 @@ import {
 import Credits from "./storyline/Credits";
 
 const App: Component = () => {
+    const introShown = localStorage.getItem("introShown") === "true";
     let [stage, setStage] = createSignal(GameStage.LOADING_SCREEN);
 
     if (import.meta.env.DEV) {
@@ -78,8 +79,10 @@ const App: Component = () => {
                 <Switch>
                     <Match when={stage() == GameStage.LOADING_SCREEN}>
                         <LoadingScreen
+                            skipLogos={introShown}
                             doneCallback={() => {
                                 console.log("calling the next stage");
+                                localStorage.setItem("introShown", "true");
                                 setStage(GameStage.MAIN_MENU);
                             }}
                         />
