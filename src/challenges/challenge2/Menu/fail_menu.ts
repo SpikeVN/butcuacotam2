@@ -12,7 +12,7 @@ export function showFailMenu(scene: Phaser.Scene, options: ShowFailMenuOptions):
 	const title = scene.add.text(scene.scale.width / 2, scene.scale.height / 2 - 24, 'Thất bại', {
 		fontSize: '42px',
 		fontFamily: 'Cormorant Garamond, serif',
-		color: '#f87171'
+		color: '#b4a3fd'
 	});
 	title.setOrigin(0.5);
 

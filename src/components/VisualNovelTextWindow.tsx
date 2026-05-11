@@ -261,9 +261,9 @@ const VisualNovelTextWindow: Component<VisualNovelTextWindowProps> = (
                             }}
                         />
                         <div class="absolute bottom-3 w-full flex items-center justify-center gap-6">
-                            <button class="font-bold text-white cursor-pointer">
+                            {/* <button class="font-bold text-white cursor-pointer">
                                 lịch sử chat
-                            </button>
+                            </button> */}
                             <button
                                 class="font-bold text-white cursor-pointer"
                                 onClick={() =>
@@ -272,9 +272,9 @@ const VisualNovelTextWindow: Component<VisualNovelTextWindowProps> = (
                             >
                                 về menu
                             </button>
-                            <button class="font-bold text-white cursor-pointer">
+                            {/* <button class="font-bold text-white cursor-pointer">
                                 cài đặt
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

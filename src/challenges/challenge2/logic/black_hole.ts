@@ -138,4 +138,28 @@ export class BlackHoleRenderer {
     destroy(): void {
         this.objects.forEach(obj => obj.destroy());
     }
+
+    /** Fade out all layers (dim the black hole) */
+    fadeOut(duration = 200): void {
+        this.objects.forEach(obj => {
+            this.scene.tweens.add({
+                targets: obj,
+                alpha: 0.08,
+                duration,
+                ease: 'Sine.Out',
+            });
+        });
+    }
+
+    /** Fade back in to full visibility */
+    fadeIn(duration = 300): void {
+        this.objects.forEach(obj => {
+            this.scene.tweens.add({
+                targets: obj,
+                alpha: 1,
+                duration,
+                ease: 'Sine.In',
+            });
+        });
+    }
 }

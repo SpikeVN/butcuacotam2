@@ -75,7 +75,7 @@ export const SCRIPT_DATA: Record<string, ScriptEntry[]> = {
         ["s2.turnoff", "Tấm", "Nhưng ông Bụt ơi, con không biết đường. Khu đó xa lắm, con lại chưa đến bao giờ, rồi còn không có xe nữa ạ."],
         ["s2.turnoff", "Bụt", "Ta biết. Nên ta mới còn ở đây."],
         ["s2.turnoff", "Tấm", "Vậy là con phải làm gì ạ?"],
-        ["s2.turnoff", "Bụt", "Chút nữa ta sẽ dưa cho con tấm bản đồ cũ của ta. Muốn đến đúng giờ, con phải đi đường tắt, mà đường tắt ở đó thì... phải nói là hơi phức tạp một chút."],
+        ["s2.turnoff", "Bụt", "Chút nữa ta sẽ đưa cho con tấm bản đồ cũ của ta. Muốn đến đúng giờ, con phải đi đường tắt, mà đường tắt ở đó thì... phải nói là hơi phức tạp một chút."],
         ["s2.turnoff", "Tấm", "\"Phức tạp một chút\" là sao ạ?"],
         ["s2.turnoff", "Bụt", "Là hẻm chồng hẻm, ngõ thông ngõ, ngách sâu mười dấu gạch chéo. Người dân sống ở đó hai mươi năm còn lạc, con đừng lo."],
         ["s2.turnoff", "System", "*Tấm hoàn toàn không \"đừng lo\" chút nào.*"],

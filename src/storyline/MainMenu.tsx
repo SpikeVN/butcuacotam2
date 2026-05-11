@@ -73,7 +73,7 @@ export default function MainMenu(props: {
                                 <ArrowRight />
                             </button>
                         </div>
-                        <div class="flex flex-col gap-1 items-start justify-center">
+                        {/* <div class="flex flex-col gap-1 items-start justify-center">
                             <button
                                 class="lighten animated-underline px-9 py-3 flex flex-row gap-3 items-center justify-center"
                                 onClick={() =>
@@ -91,7 +91,7 @@ export default function MainMenu(props: {
                                 </p>
                                 <ArrowRight />
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <p class="absolute text-fg2 text-sm bottom-3 max-w-3/5 text-center">

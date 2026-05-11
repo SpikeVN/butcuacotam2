@@ -8,6 +8,7 @@ import { unlockLevel } from '../logic/progress';
 import { showFailMenu } from '../Menu/fail_menu';
 import { showWinMenu } from '../Menu/win_menu';
 import { showPauseMenu } from '../Menu/pause_menu';
+import { showIntroOverlay } from '../Menu/intro_overlay';
 import { saveUserdata, setCheckpoint } from '../../../engine/userdata';
 import { switchPath } from '../../../engine/script';
 
@@ -27,6 +28,7 @@ export default class Level2 extends Phaser.Scene {
     private mazeRows = 0;
     private offsetX = 0;
     private offsetY = 0;
+    private isIntro = true;
     private isFailed = false;
     private isWon = false;
     private failOverlay?: Phaser.GameObjects.Container;
@@ -167,10 +169,21 @@ export default class Level2 extends Phaser.Scene {
         }).setOrigin(0.5, 0);
 
         this.input.keyboard?.on('keydown-ESC', () => this.togglePause());
+
+        // Show intro overlay before the game starts
+        this.isIntro = true;
+        showIntroOverlay(this, {
+            title: 'Màn 2 — Ngõ',
+            description: 'Đừng để Tấm đâm vào tường nhé!',
+            showSpaceKey: false,
+            onStart: () => {
+                this.isIntro = false;
+            },
+        });
     }
 
     update(_time: number, delta: number) {
-        if (this.isFailed || this.isWon || this.isPaused) {
+        if (this.isFailed || this.isWon || this.isPaused || this.isIntro) {
             return;
         }
 

@@ -22,6 +22,8 @@ export type MazeCollisionConfig = {
 
 export type PlayerEvents = {
 	onFail?: () => void;
+	onJumpStart?: () => void;
+	onJumpEnd?: () => void;
 };
 
 export class PlayerController {
@@ -29,6 +31,12 @@ export class PlayerController {
 
 	private readonly scene: Phaser.Scene;
 	private readonly cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+	private readonly wasd: {
+		W: Phaser.Input.Keyboard.Key;
+		A: Phaser.Input.Keyboard.Key;
+		S: Phaser.Input.Keyboard.Key;
+		D: Phaser.Input.Keyboard.Key;
+	};
 	private readonly velocity = new Phaser.Math.Vector2(0, 0);
 	private readonly acceleration: number;
 	private readonly maxSpeed: number;
@@ -41,6 +49,8 @@ export class PlayerController {
 	private readonly stopAtWalls: boolean;
 	private readonly fallOnCollision: boolean;
 	private readonly onFail?: () => void;
+	private readonly onJumpStart?: () => void;
+	private readonly onJumpEnd?: () => void;
 	private isFalling = false;
 	private isFailed = false;
 
@@ -49,9 +59,13 @@ export class PlayerController {
 	private jumpCooldown = 0;
 	private readonly jumpDuration = 400; // ms
 	private readonly jumpCooldownTime = 600; // ms
+	private jumpGraceTimer = 0; // ms of grace after landing before black holes kill you
+	private readonly jumpGraceDuration = 150; // ms
+	private jumpProgress = 0; // 0→1→0 over the jump arc
 	private jumpShadow?: Phaser.GameObjects.Ellipse;
 	private jumpVisual?: Phaser.GameObjects.Container;
 	private spaceKey?: Phaser.Input.Keyboard.Key;
+	private domSpaceHandler: (() => void) | null = null;
 	private lastDirection = new Phaser.Math.Vector2(1, 0);
 
 	// Visual layers
@@ -70,6 +84,8 @@ export class PlayerController {
 		this.stopAtWalls = collision?.stopAtWalls ?? false;
 		this.fallOnCollision = collision?.fallOnCollision ?? true;
 		this.onFail = events?.onFail;
+		this.onJumpStart = events?.onJumpStart;
+		this.onJumpEnd = events?.onJumpEnd;
 
 		const size = config.size ?? 14;
 		this.body = scene.add.rectangle(
@@ -146,7 +162,19 @@ export class PlayerController {
 		}
 		this.cursors = cursors;
 
+		this.wasd = scene.input.keyboard!.addKeys('W,A,S,D') as any;
+
 		this.spaceKey = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+		// DOM fallback for Space — browser often eats it before Phaser sees it
+		const domHandler = (e: KeyboardEvent) => {
+			if (e.code === 'Space' && !this._isJumping && this.jumpCooldown <= 0 && !this.isFalling && !this.isFailed) {
+				e.preventDefault();
+				this.startJump();
+			}
+		};
+		window.addEventListener('keydown', domHandler);
+		this.domSpaceHandler = () => window.removeEventListener('keydown', domHandler);
 	}
 
 	update(delta: number): void {
@@ -159,6 +187,11 @@ export class PlayerController {
 			this.jumpCooldown = Math.max(0, this.jumpCooldown - delta);
 		}
 
+		// Handle jump grace timer (brief invulnerability after landing)
+		if (this.jumpGraceTimer > 0) {
+			this.jumpGraceTimer = Math.max(0, this.jumpGraceTimer - delta);
+		}
+
 		// Trigger jump on Space press
 		if (this.spaceKey?.isDown && !this._isJumping && this.jumpCooldown <= 0) {
 			this.startJump();
@@ -166,8 +199,8 @@ export class PlayerController {
 
 		const dt = delta / 1000;
 		const input = new Phaser.Math.Vector2(
-			(this.cursors.right?.isDown ? 1 : 0) - (this.cursors.left?.isDown ? 1 : 0),
-			(this.cursors.down?.isDown ? 1 : 0) - (this.cursors.up?.isDown ? 1 : 0)
+			(this.cursors.right?.isDown || this.wasd.D.isDown ? 1 : 0) - (this.cursors.left?.isDown || this.wasd.A.isDown ? 1 : 0),
+			(this.cursors.down?.isDown || this.wasd.S.isDown ? 1 : 0) - (this.cursors.up?.isDown || this.wasd.W.isDown ? 1 : 0)
 		);
 
 		if (input.lengthSq() > 0) {
@@ -209,20 +242,46 @@ export class PlayerController {
 		this.visualContainer.setPosition(this.body.x, this.body.y);
 		this.visualContainer.setAlpha(this.body.alpha);
 
-		// Đồng bộ jumpVisual và shadow theo body (di chuyển ngang)
+		// Frame-by-frame jump visual: arc follows the body in real-time
 		if (this._isJumping) {
 			this.visualContainer.setAlpha(0);
+			const bodySize = this.body.width;
+			const jumpHeight = bodySize * 2.2;
+
+			// jumpProgress goes 0→1 (up) then 1→0 (down)
+			const arcPhase = this.jumpProgress <= 0.5
+				? this.jumpProgress / 0.5          // 0→1 going up
+				: 1 - (this.jumpProgress - 0.5) / 0.5; // 1→0 coming down
+			const arcY = this.body.y - jumpHeight * arcPhase;
+
 			if (this.jumpVisual) {
-				this.jumpVisual.setX(this.body.x);
-				// Y của jumpVisual do tween điều khiển, chỉ cập nhật X
+				this.jumpVisual.setPosition(this.body.x, arcY);
+				// Scale up at apex
+				const scale = 1 + 0.15 * arcPhase;
+				this.jumpVisual.setScale(scale);
 			}
 			if (this.jumpShadow) {
 				this.jumpShadow.setPosition(this.body.x, this.body.y + 4);
 			}
+
+			// Advance progress
+			const step = delta / this.jumpDuration;
+			this.jumpProgress += step;
+			if (this.jumpProgress >= 1) {
+				this._isJumping = false;
+				this.jumpProgress = 0;
+				this.jumpGraceTimer = this.jumpGraceDuration;
+				this.visualContainer.setAlpha(1);
+				this.jumpVisual?.destroy();
+				this.jumpVisual = undefined;
+				this.jumpShadow?.destroy();
+				this.jumpShadow = undefined;
+				this.onJumpEnd?.();
+			}
 		}
 
-		// Only check hole collisions when NOT jumping
-		if (!this._isJumping && this.fallOnCollision && this.isPlayerFallenIntoHole()) {
+		// Only check hole collisions when NOT jumping and NOT in grace period
+		if (!this._isJumping && this.jumpGraceTimer <= 0 && this.fallOnCollision && this.isPlayerFallenIntoHole()) {
 			this.startFallSequence();
 		}
 	}
@@ -255,16 +314,18 @@ export class PlayerController {
 
 	private startJump(): void {
 		this._isJumping = true;
+		this.jumpProgress = 0;
 		this.jumpCooldown = this.jumpCooldownTime;
+		this.jumpGraceTimer = 0;
 
-		// Impulse nhỏ về phía đang di chuyển — vừa đủ để vượt qua 1 ô black hole
-		// Dựa trên cellSize để mọi level nhảy cùng khoảng cách (~1 cell)
-		const crossImpulse = this.cellSize * 2.0;
+		// Strong impulse in movement direction — enough to clear ~1.5 cells
+		const crossImpulse = this.cellSize * 5.0;
 		this.velocity.x += this.lastDirection.x * crossImpulse;
 		this.velocity.y += this.lastDirection.y * crossImpulse;
 
+		this.onJumpStart?.();
+
 		const bodySize = this.body.width;
-		const jumpHeight = bodySize * 2.2; // độ cao nhảy (pixel offset lên)
 
 		// Tạo shadow tại vị trí gốc (trên mặt đất)
 		this.jumpShadow = this.scene.add.ellipse(
@@ -302,35 +363,6 @@ export class PlayerController {
 		jRE.fillCircle(jEyeOff + 1, -r * 0.15, jEyeR * 0.55);
 		this.jumpVisual.add(jRE);
 		this.jumpVisual.setDepth(this.body.depth + 10);
-
-		// Nhảy lên
-		this.scene.tweens.add({
-			targets: this.jumpVisual,
-			y: this.body.y - jumpHeight,
-			scaleX: 1.15,
-			scaleY: 1.15,
-			duration: this.jumpDuration * 0.45,
-			ease: 'Sine.Out',
-			onComplete: () => {
-				// Rơi xuống
-				this.scene.tweens.add({
-					targets: this.jumpVisual,
-					y: this.body.y,
-					scaleX: 1.0,
-					scaleY: 1.0,
-					duration: this.jumpDuration * 0.55,
-					ease: 'Sine.In',
-					onComplete: () => {
-						this._isJumping = false;
-						this.visualContainer.setAlpha(1);
-						this.jumpVisual?.destroy();
-						this.jumpVisual = undefined;
-						this.jumpShadow?.destroy();
-						this.jumpShadow = undefined;
-					}
-				});
-			}
-		});
 	}
 
 	private startFallSequence(): void {
@@ -417,4 +449,10 @@ export class PlayerController {
 
 		return false;
 	}
-}
+
+	/** Clean up DOM listeners */
+	public destroy(): void {
+		this.domSpaceHandler?.();
+		this.domSpaceHandler = null;
+	}
+}

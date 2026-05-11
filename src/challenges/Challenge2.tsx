@@ -7,6 +7,17 @@ import { onMount } from "solid-js";
 
 export default function Challenge2() {
     onMount(() => {
+        // Destroy any previous Phaser game instance (handles HMR properly)
+        const existingCanvas = document.querySelector("#game-container canvas");
+        if (existingCanvas) {
+            // Phaser stores the game instance on the canvas
+            const game = (window as any).__phaserGame;
+            if (game) {
+                game.destroy(true);
+            }
+            (window as any).__phaserGame = null;
+        }
+
         const config: Phaser.Types.Core.GameConfig = {
             type: Phaser.AUTO,
             width: 900,
@@ -23,7 +34,14 @@ export default function Challenge2() {
             scene: [Selection, Level1, Level2, Level3],
         };
 
-        new Phaser.Game(config);
+        const game = new Phaser.Game(config);
+        (window as any).__phaserGame = game;
+
+        // Cleanup on unmount
+        return () => {
+            game.destroy(true);
+            (window as any).__phaserGame = null;
+        };
     });
 
     return (
