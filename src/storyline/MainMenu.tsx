@@ -35,7 +35,7 @@ export default function MainMenu(props: {
                 ref={mainMenu}
                 class="z-10 absolute main-menu w-full h-full flex flex-col gap-5 items-center justify-center"
             >
-                <div class="absolute w-full h-full flex items-center justify-center">
+                <div class="absolute w-full h-full flex items-center justify-center pointer-events-none">
                     {starryPath}
                 </div>
 
@@ -94,13 +94,14 @@ export default function MainMenu(props: {
                         </div> */}
                     </div>
                 </div>
-                <p class="absolute text-fg2 text-sm bottom-3 max-w-3/5 text-center">
+                <p class="absolute text-fg2 text-sm bottom-3 max-w-3/5 text-center z-30">
                     Bụt của cô Tấm 0.0.1-ALPHA. Bản quyền © 2026 CLB
                     Khoa&nbsphọc Công&nbspnghệ trong Kinh&nbsptế và
                     Kinh&nbspdoanh.{" "}
                     <a
                         href="https://github.com/SpikeVN/butcuacotam2/"
                         target="_blank"
+                        class="underline hover:text-accent transition-all ease-in duration-100"
                     >
                         Phát hành theo giấy phép GPLv3.
                     </a>
