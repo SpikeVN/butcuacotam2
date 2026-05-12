@@ -456,7 +456,7 @@ function DatasetWindow(props: { isExiting?: boolean }) {
                         .xlsx
                     </a>
                     <a
-                        href="/challenges/1/dataset.xlsx"
+                        href="/challenges/1/dataset.csv"
                         class="btn"
                         target="_blank"
                     >
