@@ -7,16 +7,12 @@ import { computeHash, generateRandomToken } from "../engine/crypto";
 import AuthTicket from "./tickets/AuthTicket";
 import { AnimatedShow } from "../components/winlib/AnimatedShow";
 
-let [branch, setBranch] = createSignal("none");
-let [spellntoken, setspellntoken] = createSignal(["", ""]);
-let [doneSetup, setDoneSetup] = createSignal(false);
-
 export default function AuthenticationGuard(props: { children: any }) {
-    const showAuth = () => !(authenticated() && doneSetup());
+    const [branch, setBranch] = createSignal("none");
+    const [spellntoken, setspellntoken] = createSignal(["", ""]);
+    const [doneSetup, setDoneSetup] = createSignal(authenticated());
 
-    onMount(() => {
-        setDoneSetup(authenticated())
-    });
+    const showAuth = () => !(authenticated() && doneSetup());
 
     return (
         <>
@@ -110,12 +106,17 @@ export default function AuthenticationGuard(props: { children: any }) {
                                         Để bắt đầu, chúng mình cần một số thông
                                         tin của bạn. <br /> Chúng mình sẽ liên
                                         lạc với bạn bằng những thông tin này.
+                                        <br />
+                                        Bạn có thể bỏ trống những mục này nếu
+                                        bạn muốn.
                                     </p>
                                 </div>
                             </div>
 
                             <RegisterForm
                                 onBranchChange={() => setBranch("none")}
+                                setBranch={setBranch}
+                                setspellntoken={setspellntoken}
                             />
                         </div>
                     </div>
@@ -134,7 +135,11 @@ export default function AuthenticationGuard(props: { children: any }) {
                             "auth-fade-out": isExiting,
                         }}
                     >
-                        <ShowingTicket />
+                        <ShowingTicket
+                            setDoneSetup={setDoneSetup}
+                            setBranch={setBranch}
+                            spellntoken={spellntoken}
+                        />
                     </div>
                 )}
             </AnimatedShow>
@@ -148,7 +153,11 @@ export default function AuthenticationGuard(props: { children: any }) {
 
 interface RegisterFormProps {
     onBranchChange: () => void;
+    setBranch: (v: string) => void;
+    setspellntoken: (v: [string, string]) => void;
 }
+
+const prefixes = ["Bụt", "Tấm", "Cám", "Vàng Anh", "Thị", "Bống"];
 
 function RegisterForm(props: RegisterFormProps) {
     let [formData, setFormData] = createSignal({ name: "", email: "" });
@@ -156,12 +165,11 @@ function RegisterForm(props: RegisterFormProps) {
 
     const handleGenerateSpell = async () => {
         const name = formData().name;
-        const email = formData().email;
 
-        if (!name || !email) {
+        if (!name) {
             showNotification(
                 "Lỗi",
-                "Vui lòng nhập họ tên và email trước khi tạo thần chú.",
+                "Vui lòng nhập họ tên trước khi tạo thần chú.",
             );
             return;
         }
@@ -169,20 +177,26 @@ function RegisterForm(props: RegisterFormProps) {
 
     const handleSubmit = async (ev: Event) => {
         ev.preventDefault();
-        const name = formData().name;
+        let name = formData().name;
         const email = formData().email;
         const spell = generateRandomToken();
 
-        if (!name || !email || !spell) {
+        if (!name) {
+            const randomPrefix =
+                prefixes[Math.floor(Math.random() * prefixes.length)];
+            name = `${randomPrefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+        }
+
+        if (!spell) {
             showNotification("Lỗi", "Vui lòng điền đầy đủ thông tin.");
             return;
         }
 
-        const success = await register(name, email, spell.spell);
+        const success = await register(name, email || "", spell.spell);
 
         if (success) {
-            setspellntoken([spell.spell, spell.token]);
-            setBranch("showing_ticket");
+            props.setspellntoken([spell.spell, spell.token]);
+            props.setBranch("showing_ticket");
         } else {
             showNotification(
                 "Lỗi",
@@ -199,19 +213,42 @@ function RegisterForm(props: RegisterFormProps) {
                     Nếu như bạn không muốn tiết lộ, có thể nhập biệt danh. Biệt
                     danh có từ ngữ không phù hợp sẽ không được chấp nhận.
                 </p>
-                <input
-                    type="text"
-                    name="name"
-                    class="form-input shadow"
-                    value={formData().name}
-                    oninput={(e) =>
-                        setFormData({
-                            ...formData(),
-                            name: e.currentTarget.value,
-                        })
-                    }
-                    required
-                />
+                <div class="flex flex-row gap-2">
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-input shadow flex-1"
+                        value={formData().name}
+                        oninput={(e) =>
+                            setFormData({
+                                ...formData(),
+                                name: e.currentTarget.value,
+                            })
+                        }
+                    />
+                    <button
+                        type="button"
+                        class="btn aspect-square"
+                        style={{
+                            padding: "0",
+                            width: "51px",
+                            height: "51px",
+                        }}
+                        title="Chọn một cái tên ngẫu nhiên"
+                        onclick={() => {
+                            const randomPrefix =
+                                prefixes[
+                                    Math.floor(Math.random() * prefixes.length)
+                                ];
+                            const newName = `${randomPrefix}-${Math.floor(
+                                1000 + Math.random() * 9000,
+                            )}`;
+                            setFormData({ ...formData(), name: newName });
+                        }}
+                    >
+                        <IconDices />
+                    </button>
+                </div>
             </div>
 
             <div class="form-group">
@@ -234,7 +271,7 @@ function RegisterForm(props: RegisterFormProps) {
             </div>
 
             <button type="submit" class="btn submit-btn">
-                Tiếp tục
+                {formData().name || formData().email ? "Tiếp tục" : "Bỏ qua"}
                 <IconArrowRight />
             </button>
 
@@ -249,7 +286,11 @@ function RegisterForm(props: RegisterFormProps) {
     );
 }
 
-function ShowingTicket() {
+function ShowingTicket(props: {
+    setDoneSetup: (v: boolean) => void;
+    setBranch: (v: string) => void;
+    spellntoken: () => [string, string];
+}) {
     return (
         <div class="auth-screen overflow-hidden flex-col gap-6">
             <h1 class="text-4xl font-serif font-medium text-accent italic">
@@ -258,8 +299,8 @@ function ShowingTicket() {
 
             <div class="flex flex-col gap-1">
                 <p class="text-center">
-                    Bạn sẽ cần cung cấp thần chú/mã QR trong vé này để xác minh
-                    khi nhận thưởng.
+                    Bạn sẽ cần cung cấp thần chú/mã QR trong vé này để đăng
+                    nhập.
                 </p>
                 <p class="text-center">
                     Đây là lần đầu tiên và cuối cùng bạn thấy tấm vé này. Bạn là
@@ -267,7 +308,7 @@ function ShowingTicket() {
                 </p>
                 <p class="text-center text-accent font-semibold">
                     BTC không biết thần chú của bạn là gì, nên cũng không thể
-                    gửi lại nếu bạn quên.
+                    gửi lại cho bạn nếu bạn quên.
                 </p>
                 <p class="text-center">
                     P/S: Bạn sẽ được nhận một tấm vé khác để Locket sau. Đừng lo
@@ -278,16 +319,16 @@ function ShowingTicket() {
             <div>
                 <AuthTicket
                     name={userdata().name || "tên cậu là gì?"}
-                    spell={spellntoken()[0] || "bống bống bang bang"}
-                    token={spellntoken()[1] || "000000"}
+                    spell={props.spellntoken()[0] || "bống bống bang bang"}
+                    token={props.spellntoken()[1] || "000000"}
                 />
             </div>
 
             <button
                 class="btn"
                 onclick={() => {
-                    setDoneSetup(true);
-                    setBranch("none");
+                    props.setDoneSetup(true);
+                    props.setBranch("none");
                 }}
             >
                 Bắt đầu trò chơi
@@ -312,5 +353,26 @@ export const IconArrowRight = () => (
     >
         <path d="M5 12h14" />
         <path d="m12 5 7 7-7 7" />
+    </svg>
+);
+
+export const IconDices = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <rect width="12" height="12" x="2" y="10" rx="2" ry="2" />
+        <path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-5a2.24 2.24 0 0 0-3 0L10 6" />
+        <path d="M6 18h.01" />
+        <path d="M10 14h.01" />
+        <path d="M15 6h.01" />
+        <path d="M18 9h.01" />
     </svg>
 );

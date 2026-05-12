@@ -8,7 +8,7 @@ const ENDPOINT = (import.meta.env.VITE_API_ENDPOINT ? import.meta.env.VITE_API_E
 // @ts-ignore
 export let [authenticated, setAuthenticated] = createSignal(false);
 export let [dataLoaded, setDataLoaded] = createSignal(false);
-
+export let [isMaintainance, setIsMaintainance] = createSignal(false);
 // @ts-ignore
 export let [userdata, setUserdata]: Signal<UserData> = createSignal({});
 
@@ -67,6 +67,8 @@ export const loadUserdata = async () => {
         );
         setAuthenticated(false);
         setDataLoaded(true);
+        // @ts-ignore
+        setIsMaintainance(true);
     }
 
     return authenticated()

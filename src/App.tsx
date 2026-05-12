@@ -31,6 +31,7 @@ import {
     saveUserdata,
     setDataLoaded,
     dataLoaded,
+    isMaintainance,
 } from "./engine/userdata";
 import Credits from "./storyline/Credits";
 
@@ -74,10 +75,24 @@ const App: Component = () => {
             <Show when={import.meta.env.DEV}>
                 <DevTools currentStage={stage()} />
             </Show>
+            <NotificationSystem />
             <Show when={dataLoaded()}>
-                <NotificationSystem />
                 <Switch>
-                    <Match when={stage() == GameStage.LOADING_SCREEN}>
+                    <Match when={isMaintainance()}>
+                        <div class="w-[100vw] h-full flex items-center justify-center">
+                            <h1 class="font-serif text-accent text-4xl italic text-center font-medium">
+                                Bụt của Cô Tấm đang bảo trì. <br />
+                                Xin vui lòng thử lại sau. Chúng mình rất xin lỗi vì sự bất
+                                tiện này.
+                            </h1>
+                        </div>
+                    </Match>
+                    <Match
+                        when={
+                            !isMaintainance() &&
+                            stage() == GameStage.LOADING_SCREEN
+                        }
+                    >
                         <LoadingScreen
                             skipLogos={introShown}
                             doneCallback={() => {
@@ -87,17 +102,25 @@ const App: Component = () => {
                             }}
                         />
                     </Match>
-                    <Match when={stage() == GameStage.MAIN_MENU}>
+                    <Match
+                        when={
+                            !isMaintainance() && stage() == GameStage.MAIN_MENU
+                        }
+                    >
                         <MainMenu
                             doneCallback={(nextStage) => {
                                 setStage(nextStage);
                             }}
                         />
                     </Match>
-                    <Match when={stage() == GameStage.PLAY}>
+                    <Match
+                        when={!isMaintainance() && stage() == GameStage.PLAY}
+                    >
                         <Game />
                     </Match>
-                    <Match when={stage() == GameStage.CREDITS}>
+                    <Match
+                        when={!isMaintainance() && stage() == GameStage.CREDITS}
+                    >
                         <Credits />
                     </Match>
                 </Switch>

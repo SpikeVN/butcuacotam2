@@ -30,7 +30,7 @@ class RegisterRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     name: str
-    email: str
+    email: str = ""
     spell: str
 
 

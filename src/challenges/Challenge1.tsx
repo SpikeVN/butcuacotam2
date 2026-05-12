@@ -192,6 +192,7 @@ export default function Challenge1(props: { isExiting?: boolean; onComplete: () 
                         name="question2"
                         class="shadow px-6 py-3 mt-[-0.8rem] w-md"
                         placeholder="Nhập đáp án số"
+                        step="any"
                     />
 
                     <p class="font-bold">
@@ -209,6 +210,7 @@ export default function Challenge1(props: { isExiting?: boolean; onComplete: () 
                         name="question4"
                         class="shadow px-6 py-3 mt-[-0.8rem] w-md"
                         placeholder="Nhập đáp án số"
+                        step="any"
                     />
 
                     <p class="font-bold">
