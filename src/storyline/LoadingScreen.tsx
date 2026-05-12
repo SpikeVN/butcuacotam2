@@ -20,8 +20,13 @@ export default function LoadingScreen(props: {
     const [showingLogo, setShowingLogo] = createSignal(-1);
 
     const nextLogo = () => {
-        if (props.skipLogos || showingLogo() == 3) {
+        if (showingLogo() == 3) {
             props.doneCallback();
+            return;
+        }
+
+        if (props.skipLogos) {
+            setShowingLogo(3);
             return;
         }
 
